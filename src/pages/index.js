@@ -30,6 +30,7 @@ export default function Home() {
   
   function DialogueDiv(){
 
+    if(numberOptions==0)return;
     const divs = Array.from({ length: numberOptions }, (_, i) => 
 
     <div className="flex flex-col gap-5 my-4" key={i}>
