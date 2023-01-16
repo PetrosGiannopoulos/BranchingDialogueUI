@@ -8,6 +8,7 @@ import { useEffect} from 'react'
 import fs from 'fs-extra'
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import OutsideClickHandler from 'react-outside-click-handler';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -103,6 +104,52 @@ export default function Home() {
     return <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 p-2 w-full bg-scroll items-end h-[560px] overflow-auto gap-2">{divs}</div>
   }
 
+  const Node = ({ id, text, options }) => {
+    const [isSelected, setIsSelected] = useState(false);
+  
+    const handleClickOutside = () => {
+      setIsSelected(false);
+    };
+
+    return (
+      <OutsideClickHandler onOutsideClick={handleClickOutside}>
+        <div className={'box-content flex flex-col gap-4 p-4 ml-8 rounded-lg w-[256px] border-white bg-toolbarbg-2 '+`${isSelected ? 'border-2':'border-1'}`} onClick={() => setIsSelected(true)}>
+          {/* Node Text */}
+          <div className="text-white text-[12px] font-changaOne overflow-auto">{text}</div>
+          {/* Node Input */}
+          {id>1?(
+            <div className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-25px]"></div>
+          ):(
+            <div>
+
+            </div>
+          )}
+          {/* Node Options */}
+          <div className="flex flex-col gap-2">
+            {options!=null ?options.map((optionsInstance, index)=>(
+              // Node Option
+              <div key={index} className="box-content rounded-lg p-2 w-[240px] border-white border-2 bg-toolbarbg-3">
+                <span className="font-changaOne text-[12px] text-white">{optionsInstance.text}</span>
+              </div>
+            )) : (
+              <div></div>
+            )}
+          </div>
+
+          <div className="relative bg-mainBg-6 border-white border-2 rounded-full w-4 h-4 right-[-264px]"></div>
+          {/*<div className="node-options">
+            {options.map((option, index) => (
+              <div key={index} className="node-option">
+                <div className="node-option-text">{option.text}</div>
+                <Node id={option.next} text={dialogues.dialogues.find(dialogueInstance => dialogueInstance.id === option.next).text} options={data.dialogues.find(dialogueInstance => dialogueInstance.id === option.next).dialogueOptions}/>
+              </div>
+            ))}
+          </div> */}
+        </div>
+      </OutsideClickHandler>
+    );
+  };
+
   const mapToObj = m => {
     return Array.from(m).reduce((obj, [key, value]) => {
       obj[key] = value;
@@ -157,30 +204,13 @@ export default function Home() {
   }
 
   const saveDialogues = async ()=>{
-    // try {
-      
-    //   //console.log(JSON.stringify(dialogues, null, 2));
-    //   const result = await axios.post('/api/fsutil', dialogues);
-    //   console.log(result)
-      
-    //   //console.log(response.data);
-    // // Do something with the respo
-    // } catch (error) {
-    //   console.log(error)
-    // }
-
     
     downloadFile()
   }
 
   async function downloadFile() {
     try {
-      // const response = await fetch('/api/download', {
-      //   method: 'GET',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // });
+      
       const blob = new Blob([JSON.stringify(dialogues, null, 2)], {type: "application/json"});//await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -209,7 +239,7 @@ export default function Home() {
           {/* Toolbar */}
           <div></div>
           {/* User Interface */}
-          <div className="flex flex-row bg-toolbarbg-1 rounded-xl shadow-lg w-[1024px] h-[576px] mt-[100px] ml-[100px]">
+          <div className="flex flex-row bg-toolbarbg-1 rounded-xl shadow-lg w-[410px] h-[576px] mt-[100px] ml-[100px]">
             {/* UI Buttons */}
 
             <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 gap-2 p-2">
@@ -235,24 +265,10 @@ export default function Home() {
             </div>
 
             {/* Dialogue UI */}
-            <DialoguePreviewDiv>
+            {/* <DialoguePreviewDiv>
 
-            </DialoguePreviewDiv>
-            {/* <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 p-2 w-full items-end bg-scroll h-[560px] overflow-auto gap-2">
-              <div className="font-changaOne text-[18px] text-red-900 rounded-lg border-none p-2 bg-gradient-to-t from-orange-800 via-orange-300 to-orange-500">
-                <span className="align-middle">Hello, this is a demo dialogue. Use Buttons to the left to add dialogues and options to this conversation </span>
-              </div>
-              <div className="font-changaOne text-[18px] text-cyan-900 rounded-lg border-none p-2 bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500">
-                <span className="align-middle">Option 1</span>
-              </div>
-              <div className="font-changaOne text-[18px] text-cyan-900 rounded-lg border-none p-2 bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500">
-                <span className="align-middle">Option 2</span>
-              </div>
-              <div className="font-changaOne text-[18px] text-red-900 rounded-lg border-none p-2 bg-gradient-to-t from-orange-800 via-orange-300 to-orange-500">
-                <span className="align-middle">This is the dialogue that appears when the player selects an option</span>
-              </div>
-            </div> */}
-
+            </DialoguePreviewDiv> */}
+            
             {addModal? (
               <React.Fragment>
                 <div className="absolute w-[1024px] h-[576px] bg-toolbarbg-1 rounded-xl shadow-lg p-8">
@@ -318,16 +334,23 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
+
+                
+
               </React.Fragment>
             ): (
               <React.Fragment>
-
+                {/* Node System */}
+                {dialogues.dialogues.map(dialogueInstance => (
+                  <Node key={dialogueInstance.id} id={dialogueInstance.id} text={dialogueInstance.text} options={dialogueInstance.dialogueOptions} />
+                ))}
               </React.Fragment>
             )}
             
+            
           </div>
 
-         
+          
 
         </div>        
       </main>
