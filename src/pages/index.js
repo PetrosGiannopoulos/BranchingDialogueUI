@@ -3,12 +3,14 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useEffect} from 'react'
 import fs from 'fs-extra'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
+import 'reactflow/dist/style.css';
+import ReactFlow, { Background, Controls, Handle, Position } from 'reactflow';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -21,11 +23,15 @@ export default function Home() {
   const [dialogueText, setDialogueText] = useState("")
   const [dialogue, setDialogue] = useState({})
   const [dialogues, setDialogues] = useState({})
+  const [nodeData, setNodeData] = useState({})
   const [initialized, setInitialized] = useState(false)
   const [id, setID] = useState(1)
 
-
-  if(!initialized)dialogues.dialogues = []
+  if(!initialized){
+    dialogues.dialogues = []
+    nodeData.position = []
+    nodeData.nodes = []
+  }
 
   // let dialogue = {}
   
@@ -104,7 +110,74 @@ export default function Home() {
     return <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 p-2 w-full bg-scroll items-end h-[560px] overflow-auto gap-2">{divs}</div>
   }
 
-  const Node = ({ id, text, options }) => {
+  function InputNode({id}){
+    const nodeRef = useRef();
+    const [x, setX] = useState();
+
+    // Y
+    const [y, setY] = useState();
+
+    const getPosition = () => {
+      const x = nodeRef.current.offsetLeft;
+      setX(x);
+  
+      const y = nodeRef.current.offsetTop;
+      setY(y);
+
+      nodeData.inputPos[id-1].x = x;
+      nodeData.inputPos[id-1].y = y;
+    };
+  
+    // Get the position of the node in the beginning
+    useEffect(() => {
+      getPosition();
+    }, []);
+  
+    // Re-calculate X and Y of the node when the window is resized by the user
+    useEffect(() => {
+      window.addEventListener("resize", getPosition);
+    }, []);
+
+    return(
+      <div ref={nodeRef}  className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-24px]"></div>
+    )
+  }
+
+  function OutputNode({id}){
+    const nodeRef = useRef();
+
+    const [x, setX] = useState();
+    // Y
+    const [y, setY] = useState();
+
+    const getPosition = () => {
+      const x = nodeRef.current.offsetLeft;
+      setX(x);
+
+      const y = nodeRef.current.offsetTop;
+      setY(y);
+
+      nodeData.outputPos[id - 1].x = x;
+      nodeData.outputPos[id - 1].y = y;
+
+    };
+   
+     // Get the position of the node in the beginning
+     useEffect(() => {
+       getPosition();
+     }, []);
+   
+     // Re-calculate X and Y of the node when the window is resized by the user
+     useEffect(() => {
+       window.addEventListener("resize", getPosition);
+     }, []);
+
+    return (
+      <div ref={nodeRef} className="relative bg-mainBg-6 border-white border-2 rounded-full w-4 h-4 right-[-264px]"></div>
+    )
+  }
+
+  const MyNode = ({ id, text, options }) => {
     const [isSelected, setIsSelected] = useState(false);
   
     const handleClickOutside = () => {
@@ -118,12 +191,14 @@ export default function Home() {
           <div className="text-white text-[12px] font-changaOne overflow-auto">{text}</div>
           {/* Node Input */}
           {id>1?(
-            <div className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-25px]"></div>
+            <InputNode id={id}/>
+            //<div className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-24px]"></div>
           ):(
             <div>
 
             </div>
           )}
+          
           {/* Node Options */}
           <div className="flex flex-col gap-2">
             {options!=null ?options.map((optionsInstance, index)=>(
@@ -136,7 +211,7 @@ export default function Home() {
             )}
           </div>
 
-          <div className="relative bg-mainBg-6 border-white border-2 rounded-full w-4 h-4 right-[-264px]"></div>
+          <OutputNode id={id}/>
           {/*<div className="node-options">
             {options.map((option, index) => (
               <div key={index} className="node-option">
@@ -149,6 +224,54 @@ export default function Home() {
       </OutsideClickHandler>
     );
   };
+
+  const nodeTypes = {
+    custom: CustomNode,
+  };
+
+  function CustomNode({data}){
+
+    const [isSelected, setIsSelected] = useState(false);
+  
+    const handleClickOutside = () => {
+      setIsSelected(false);
+    };
+
+    return (
+      <OutsideClickHandler onOutsideClick={handleClickOutside}>
+        <div className={'box-content flex flex-col gap-4 p-4 rounded-lg w-[256px] border-white bg-toolbarbg-2 '+`${isSelected ? 'border-2':'border-1'}`} onClick={() => setIsSelected(true)}>
+          <div className="text-white text-[12px] font-changaOne overflow-auto text-center">{data.text}</div>
+
+          <div className="flex flex-col gap-2">
+              {data.options!=null ?data.options.map((optionsInstance, index)=>(
+                // Node Option
+                <div key={index} className="box-content rounded-lg p-2 w-[240px] border-white border-2 bg-toolbarbg-3">
+                  <span className="font-changaOne text-[12px] text-white">{optionsInstance.text}</span>
+                </div>
+              )) : (
+                <div></div>
+              )}
+            </div>
+
+          <Handle type="source" position={Position.Left} className="bg-mainBg-4 rounded-full" />
+          <Handle type="target" position={Position.Right} className="bg-mainBg-6 rounded-full" />
+        </div>
+      </OutsideClickHandler>
+    )
+  }
+
+  function Flow(){
+    return (
+      <div className="flex flex-row w-full">
+        <ReactFlow 
+          nodes={nodeData.nodes}
+          nodeTypes={nodeTypes}>
+          <Background />
+          <Controls />
+        </ReactFlow>
+      </div>
+    );
+  }
 
   const mapToObj = m => {
     return Array.from(m).reduce((obj, [key, value]) => {
@@ -196,7 +319,21 @@ export default function Home() {
     
     dialogues.dialogues.push(dialogue);
 
-    console.log(JSON.stringify(dialogues, null, 2));
+    //console.log(JSON.stringify(dialogues, null, 2));
+    nodeData.position.push({x: 0, y: 0})
+    
+    const node = {
+      id: dialogue.id,
+      type: 'custom',
+      data: {text: dialogue.text, options: dialogue.dialogueOptions},
+      position: {x: 0, y: 0},
+      sourcePosition: 'left',
+      targetPosition: 'right',
+      
+    }
+
+    nodeData.nodes.push(node);
+
   }
 
   const CancelButton = async()=>{
@@ -234,7 +371,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="bg-mainBg-1">
-        <div className="flex flex-col bg-gradient-to-b from-mainBg-1 via-mainBg-2 to-mainBg-1 min-h-screen max-md:min-w-max max-md:w-full">
+        <div className="flex flex-row bg-gradient-to-b from-mainBg-1 via-mainBg-2 to-mainBg-1 min-h-screen max-md:min-w-max max-md:w-full">
           
           {/* Toolbar */}
           <div></div>
@@ -339,17 +476,24 @@ export default function Home() {
 
               </React.Fragment>
             ): (
-              <React.Fragment>
-                {/* Node System */}
-                {dialogues.dialogues.map(dialogueInstance => (
-                  <Node key={dialogueInstance.id} id={dialogueInstance.id} text={dialogueInstance.text} options={dialogueInstance.dialogueOptions} />
-                ))}
-              </React.Fragment>
+              <div>
+                
+              </div>
             )}
             
-            
           </div>
-
+          
+          {addModal? (
+            <div></div>
+          ):(
+            <div className="flex flex-row bg-toolbarbg-3 w-full h-[800px] mt-[100px] ml-[20px]">
+              {/* Node System */}
+              <Flow>
+              </Flow>
+            </div>
+            
+          )}
+          
           
 
         </div>        
