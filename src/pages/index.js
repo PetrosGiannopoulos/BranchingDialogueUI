@@ -10,7 +10,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
-import ReactFlow, { Background, Controls, Handle, Position, useNodesState } from 'reactflow';
+import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState } from 'reactflow';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +24,7 @@ export default function Home() {
   const [dialogue, setDialogue] = useState({})
   const [dialogues, setDialogues] = useState({})
   const [nodeData, setNodeData] = useState({})
+  const [edgeData, setEdgeData] = useState({})
   const [initialized, setInitialized] = useState(false)
   const [id, setID] = useState(1)
 
@@ -31,6 +32,7 @@ export default function Home() {
     dialogues.dialogues = []
     nodeData.position = []
     nodeData.nodes = []
+    edgeData.edges = []
   }
 
   // let dialogue = {}
@@ -226,10 +228,21 @@ export default function Home() {
   };
 
   const nodeTypes = {
-    custom: CustomNode,
+    dialogue: DialogueNode,
   };
 
-  function CustomNode({data}){
+  function OptionNode({nodeId, handleId, text}){
+
+    //console.log(`Node Id: ${nodeId}, HandleId: ${handleId}, Text: ${text}`)
+    return (
+      <div className="relative">
+        <span className="font-changaOne text-[12px] text-white">{text}</span>
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-50px]" />
+      </div>
+    )
+  }
+
+  function DialogueNode({id, data}){
 
     const [isSelected, setIsSelected] = useState(false);
   
@@ -239,22 +252,32 @@ export default function Home() {
 
     return (
       <OutsideClickHandler onOutsideClick={handleClickOutside}>
-        <div className={'box-content flex flex-col gap-4 p-4 rounded-lg w-[256px] border-white bg-toolbarbg-2 '+`${isSelected ? 'border-2':'border-1'}`} onClick={() => setIsSelected(true)}>
+        <div className={'box-content flex flex-col gap-4 p-4 rounded-lg w-[256px] border-2 bg-toolbarbg-2 '+`${isSelected ? 'border-white':'border-toolbarbg-1'}`} onClick={() => setIsSelected(!isSelected)}>
           <div className="text-white text-[12px] font-changaOne overflow-auto text-center">{data.text}</div>
 
           <div className="flex flex-col gap-2">
-              {data.options!=null ?data.options.map((optionsInstance, index)=>(
+              {/* {data.options!=null ?data.options.map((optionsInstance, index)=>(
                 // Node Option
                 <div key={index} className="box-content rounded-lg p-2 w-[240px] border-white border-2 bg-toolbarbg-3">
                   <span className="font-changaOne text-[12px] text-white">{optionsInstance.text}</span>
                 </div>
               )) : (
                 <div></div>
+              )} */}
+              
+              {data.options!=null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
+                <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
+                  <OptionNode key={handleId} nodeId = {id} handleId={selectsInstance} text={data.options[handleId].text}/>
+                </div>
+              )) : (
+                <div>
+                  <Handle type="source" position={Position.Right} className="bg-mainBg-6 rounded-full w-4 h-4" />
+                </div>
               )}
             </div>
 
-          <Handle type="source" position={Position.Left} className="bg-mainBg-4 rounded-full" />
-          <Handle type="target" position={Position.Right} className="bg-mainBg-6 rounded-full" />
+          <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
+          
         </div>
       </OutsideClickHandler>
     )
@@ -263,11 +286,13 @@ export default function Home() {
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(nodeData.nodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(edgeData.edges);
 
     return (
       <div className="flex flex-row w-full">
         <ReactFlow 
           nodes={nodes}
+          edges={edges}
           onNodesChange={onNodesChange}
           nodeTypes={nodeTypes}>
           <Background />
@@ -317,27 +342,100 @@ export default function Home() {
     setInitialized(true);
 
     dialogue.id = ""+id;
-    setID(id+1)
+    
     dialogue.text = ""+dialogueText;
     
     
-    dialogues.dialogues.push(dialogue);
+   
 
     //console.log(JSON.stringify(dialogues, null, 2));
-    nodeData.position.push({x: 0, y: 0})
-    
+    // nodeData.position.push({x: 0, y: 0})
     const node = {
       id: dialogue.id,
-      type: 'custom',
-      data: {text: dialogue.text, options: dialogue.dialogueOptions},
-      position: {x: 0, y: 0},
-      sourcePosition: 'left',
-      targetPosition: 'right',
+      type: 'dialogue',
+      data: {
+        text: dialogue.text, 
+        options: dialogue.dialogueOptions,
+        selects: {
+          
+        }
+      },
+      position: {x: (256+10)*dialogue.id, y: 40},
+    }
+
+    
+
+    
+
+    if(dialogue.dialogueOptions!=null){
+      node.data.selects = {}
+      for(let i=0;i<dialogue.dialogueOptions.length;i++){
+        assign(node.data.selects, 'handle-'+`${i}`, 'default')
+
+        if(dialogue.dialogueOptions[i].next==="" || dialogue.dialogueOptions[i].next === null){
+          window.alert('Every option needs to have a next parameter');
+
+          return;
+        }
+
+        const edge = {
+          type: 'default',
+          data: {
+            
+          }
+        }
+
+
+        edge.id = `e${dialogue.id}-${dialogue.dialogueOptions[i].next}`
+        edge.source = `${dialogue.id}`
+        edge.target = `${dialogue.dialogueOptions[i].next}`
+
+        edge.data.selectIndex = i
+        edge.sourceHandle = 'handle-'+`${i}`
+        // console.log(edge)
+        edgeData.edges.push(edge)
+      }
+      
+      
+    }
+    else{
+
+      const edge = {
+        type: 'default',
+        data: {
+          
+        }
+      }
+
+      edge.id = `e${dialogue.id}-${id}`
+      edge.source = `${dialogue.id}`
+      edge.target = `${id+1}`
+      edgeData.edges.push(edge)
       
     }
 
-    nodeData.nodes.push(node);
+    setID(id+1)
+    dialogues.dialogues.push(dialogue);
 
+    nodeData.nodes.push(node);
+    // edgeData.edges.push(edge)
+
+  }
+
+  function assign(obj, prop, value) {
+    if (typeof prop === "string")
+        prop = prop.split(".");
+
+    if (prop.length > 1) {
+        var e = prop.shift();
+        assign(obj[e] =
+                 Object.prototype.toString.call(obj[e]) === "[object Object]"
+                 ? obj[e]
+                 : {},
+               prop,
+               value);
+    } else
+        obj[prop[0]] = value;
   }
 
   const CancelButton = async()=>{
@@ -446,6 +544,7 @@ export default function Home() {
                             else {
                               const numOptions = parseInt(event.target.value)
                               setNumberOptions(numOptions)
+                              
                               dialogue.id = ""
                               dialogue.text = ""
                               dialogue.dialogueOptions = []
