@@ -78,155 +78,6 @@ export default function Home() {
     return <div className="flex-1 flex-col p-2 gap-5 bg-scroll overflow-auto bg-toolbarbg-3 rounded-lg">{divs}</div>;
   }
 
-  function DialogueOptionPreview({index}){
-
-    if(numberOptions==0)return;
-    const divs = Array.from({length: dialogues.dialogues[index].dialogueOptions.length}, (_, i)=>
-    
-      <div key={i}>
-        <div className="font-changaOne text-end text-[18px] text-cyan-900 rounded-lg border-none p-2 bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500">
-          <span className="">{i+1}) {dialogues.dialogues[index].dialogueOptions[i].text}</span>
-        </div>
-      </div>
-    );
-    // <div className="font-changaOne text-[18px] text-cyan-900 rounded-lg border-none p-2 bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500">
-    //       <span className="align-middle">Option 1</span>
-    //     </div>
-    return <div className="flex flex-col w-max justify-end items-end justify-self-end justify-items-end gap-2">{divs}</div>
-  }
-
-  function DialoguePreviewDiv(){
-    const divs = Array.from({length: dialogues.dialogues.length}, (_, i)=>
-    
-      <div className="flex flex-col gap-4 text-end items-end w-max" key={i}>
-        <div className="font-changaOne text-[18px] text-red-900 rounded-lg border-none p-2 bg-gradient-to-t from-orange-800 via-orange-300 to-orange-500">
-          <span className="">{dialogues.dialogues[i].text}</span>
-        </div>
-        <DialogueOptionPreview index = {i}>
-
-        </DialogueOptionPreview>
-        
-      </div>
-    );
-
-    return <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 p-2 w-full bg-scroll items-end h-[560px] overflow-auto gap-2">{divs}</div>
-  }
-
-  function InputNode({id}){
-    const nodeRef = useRef();
-    const [x, setX] = useState();
-
-    // Y
-    const [y, setY] = useState();
-
-    const getPosition = () => {
-      const x = nodeRef.current.offsetLeft;
-      setX(x);
-  
-      const y = nodeRef.current.offsetTop;
-      setY(y);
-
-      nodeData.inputPos[id-1].x = x;
-      nodeData.inputPos[id-1].y = y;
-    };
-  
-    // Get the position of the node in the beginning
-    useEffect(() => {
-      getPosition();
-    }, []);
-  
-    // Re-calculate X and Y of the node when the window is resized by the user
-    useEffect(() => {
-      window.addEventListener("resize", getPosition);
-    }, []);
-
-    return(
-      <div ref={nodeRef}  className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-24px]"></div>
-    )
-  }
-
-  function OutputNode({id}){
-    const nodeRef = useRef();
-
-    const [x, setX] = useState();
-    // Y
-    const [y, setY] = useState();
-
-    const getPosition = () => {
-      const x = nodeRef.current.offsetLeft;
-      setX(x);
-
-      const y = nodeRef.current.offsetTop;
-      setY(y);
-
-      nodeData.outputPos[id - 1].x = x;
-      nodeData.outputPos[id - 1].y = y;
-
-    };
-   
-     // Get the position of the node in the beginning
-     useEffect(() => {
-       getPosition();
-     }, []);
-   
-     // Re-calculate X and Y of the node when the window is resized by the user
-     useEffect(() => {
-       window.addEventListener("resize", getPosition);
-     }, []);
-
-    return (
-      <div ref={nodeRef} className="relative bg-mainBg-6 border-white border-2 rounded-full w-4 h-4 right-[-264px]"></div>
-    )
-  }
-
-  const MyNode = ({ id, text, options }) => {
-    const [isSelected, setIsSelected] = useState(false);
-  
-    const handleClickOutside = () => {
-      setIsSelected(false);
-    };
-
-    return (
-      <OutsideClickHandler onOutsideClick={handleClickOutside}>
-        <div className={'box-content flex flex-col gap-4 p-4 ml-8 rounded-lg w-[256px] border-white bg-toolbarbg-2 '+`${isSelected ? 'border-2':'border-1'}`} onClick={() => setIsSelected(true)}>
-          {/* Node Text */}
-          <div className="text-white text-[12px] font-changaOne overflow-auto">{text}</div>
-          {/* Node Input */}
-          {id>1?(
-            <InputNode id={id}/>
-            //<div className="relative bg-mainBg-4 border-white border-2 rounded-full w-4 h-4 left-[-24px]"></div>
-          ):(
-            <div>
-
-            </div>
-          )}
-          
-          {/* Node Options */}
-          <div className="flex flex-col gap-2">
-            {options!=null ?options.map((optionsInstance, index)=>(
-              // Node Option
-              <div key={index} className="box-content rounded-lg p-2 w-[240px] border-white border-2 bg-toolbarbg-3">
-                <span className="font-changaOne text-[12px] text-white">{optionsInstance.text}</span>
-              </div>
-            )) : (
-              <div></div>
-            )}
-          </div>
-
-          <OutputNode id={id}/>
-          {/*<div className="node-options">
-            {options.map((option, index) => (
-              <div key={index} className="node-option">
-                <div className="node-option-text">{option.text}</div>
-                <Node id={option.next} text={dialogues.dialogues.find(dialogueInstance => dialogueInstance.id === option.next).text} options={data.dialogues.find(dialogueInstance => dialogueInstance.id === option.next).dialogueOptions}/>
-              </div>
-            ))}
-          </div> */}
-        </div>
-      </OutsideClickHandler>
-    );
-  };
-
   const nodeTypes = {
     dialogue: DialogueNode,
   };
@@ -256,14 +107,6 @@ export default function Home() {
           <div className="text-white text-[12px] font-changaOne overflow-auto text-center">{data.text}</div>
 
           <div className="flex flex-col gap-2">
-              {/* {data.options!=null ?data.options.map((optionsInstance, index)=>(
-                // Node Option
-                <div key={index} className="box-content rounded-lg p-2 w-[240px] border-white border-2 bg-toolbarbg-3">
-                  <span className="font-changaOne text-[12px] text-white">{optionsInstance.text}</span>
-                </div>
-              )) : (
-                <div></div>
-              )} */}
               
               {data.options!=null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
                 <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
@@ -302,34 +145,12 @@ export default function Home() {
     );
   }
 
-  const mapToObj = m => {
-    return Array.from(m).reduce((obj, [key, value]) => {
-      obj[key] = value;
-      return obj;
-    }, {});
-  };
-
-  const mapToAoO = m => {
-    return Array.from(m).map( ([k,v]) => {return {[k]:v}} );
-  };
-
   const openAddModal = async() =>{
     setAddModal(true);
 
     setDialogue({})
 
     setNumberOptions(0)
-    // dialogue.id = "1";
-
-    // dialogues.dialogues.push(dialogue)
-
-    // dialogue = {};
-
-    // dialogue.id = "2";
-
-    // dialogues.dialogues.push(dialogue)
-
-    //console.log(JSON.stringify(dialogues, null, 2))
     
   }
 
@@ -345,9 +166,6 @@ export default function Home() {
     
     dialogue.text = ""+dialogueText;
     
-    
-   
-
     //console.log(JSON.stringify(dialogues, null, 2));
     // nodeData.position.push({x: 0, y: 0})
     const node = {
@@ -362,10 +180,6 @@ export default function Home() {
       },
       position: {x: (256+10)*dialogue.id, y: 40},
     }
-
-    
-
-    
 
     if(dialogue.dialogueOptions!=null){
       node.data.selects = {}
