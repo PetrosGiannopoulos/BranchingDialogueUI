@@ -9,7 +9,9 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo1.png)
 
-![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo2.png)
+## Visual Feedback with React-Flow Integration
+
+![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo4.png)
 
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo3.png)
 
@@ -19,7 +21,6 @@ https://main--candid-travesseiro-bc285e.netlify.app/
 
 # TODO
 
-- Proper Visual Feedback
 - Edit is not implemented yet (Soon)
 - custom domain (Soon)
 
