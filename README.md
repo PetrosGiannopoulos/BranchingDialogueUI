@@ -13,6 +13,8 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo4.png)
 
+## Output in JSON Format
+
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo3.png)
 
 #Live Demo
