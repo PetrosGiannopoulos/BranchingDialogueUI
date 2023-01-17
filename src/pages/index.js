@@ -10,7 +10,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
-import ReactFlow, { Background, Controls, Handle, Position } from 'reactflow';
+import ReactFlow, { Background, Controls, Handle, Position, useNodesState } from 'reactflow';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -261,10 +261,14 @@ export default function Home() {
   }
 
   function Flow(){
+
+    const [nodes, setNodes, onNodesChange] = useNodesState(nodeData.nodes);
+
     return (
       <div className="flex flex-row w-full">
         <ReactFlow 
-          nodes={nodeData.nodes}
+          nodes={nodes}
+          onNodesChange={onNodesChange}
           nodeTypes={nodeTypes}>
           <Background />
           <Controls />
