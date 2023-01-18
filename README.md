@@ -7,19 +7,24 @@ An easy to use app that enables game developers to create dialogues with choices
  - add next reference to each option to indicate what dialogue comes next
  - export the dialogues in JSON format
 
+## Adding new dialogue text including options
+
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo1.png)
 
-![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo2.png)
+## Visual Feedback with React-Flow Integration
+
+![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo4.png)
+
+## Output in JSON Format
 
 ![alt text](https://github.com/PetrosGiannopoulos/BranchingDialogUI/blob/main/imgs/Demo3.png)
 
-#Live Demo
+## Live Demo
 
 https://main--candid-travesseiro-bc285e.netlify.app/
 
 # TODO
 
-- Proper Visual Feedback
 - Edit is not implemented yet (Soon)
 - custom domain (Soon)
 
