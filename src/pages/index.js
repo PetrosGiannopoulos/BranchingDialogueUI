@@ -28,12 +28,18 @@ export default function Home() {
   const [initialized, setInitialized] = useState(false)
   const [id, setID] = useState(1)
 
+  const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:200, y:0})
+  const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
+
   if(!initialized){
     dialogues.dialogues = []
     nodeData.position = []
     nodeData.nodes = []
     edgeData.edges = []
+    
   }
+
+  
 
   // let dialogue = {}
   
@@ -126,6 +132,45 @@ export default function Home() {
     )
   }
 
+  function RightClickPaneContextMenu(event){
+
+    event.preventDefault();
+    
+    setPaneContextMenuPosition({x: event.clientX-510, y: event.clientY-100});
+    
+    setPaneContentMenuIsOpen(true);
+
+  }
+
+  function AddNodeMenu(){
+    setPaneContentMenuIsOpen(false)
+    
+    openAddModal()
+  }
+
+  function CancelMenu(){
+    setPaneContentMenuIsOpen(false)
+  }
+
+  function PaneContextMenu({actions, position}){
+
+    return (
+
+      <React.Fragment>
+        <div className={`z-10 absolute flex flex-col bg-white border-4 border-toolbarbg-2`} style={{left: `${position.x}px`, top: `${position.y}px`}} >
+          {actions.map((action) => (
+            <button key={action.label} className="border-none text-[18px] font-lato p-4 hover:bg-[rgba(0.1,0.1,0.1,0.1)]" onClick={action.effect}>
+              {action.label}
+            </button>
+          ))}
+          {/* {console.log(`z-10 absolute flex flex-col bg-white border-2 border-black left-[${position.x}px] top-[${position.y}px]`)} */}
+
+        </div>
+      </React.Fragment>
+
+    )
+  }
+
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(nodeData.nodes);
@@ -137,7 +182,26 @@ export default function Home() {
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
-          nodeTypes={nodeTypes}>
+          onPaneContextMenu={RightClickPaneContextMenu}
+          onPaneClick={CancelMenu}
+          nodeTypes={nodeTypes}
+          >
+          {paneContentMenuIsOpen? (
+            <PaneContextMenu 
+              
+              actions={
+                [
+                  {label: "Add Dialogue Node", effect: AddNodeMenu},
+                  {label: "Cancel", effect: CancelMenu},
+                ]
+              }
+            
+              position = {paneContextMenuPosition}
+            />
+          ):(
+            <React.Fragment />
+          )}
+          
           <Background />
           <Controls />
         </ReactFlow>
@@ -178,7 +242,8 @@ export default function Home() {
           
         }
       },
-      position: {x: (256+10)*dialogue.id, y: 40},
+      //position: {x: (256+10)*dialogue.id, y: 40},
+      position: {x: paneContextMenuPosition.x, y: paneContextMenuPosition.y}
     }
 
     if(dialogue.dialogueOptions!=null){
@@ -297,17 +362,18 @@ export default function Home() {
 
             <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 gap-2 p-2">
 
-              <div className="flex flex-row min-h-max items-start gap-5">
+              {/* <div className="flex flex-row min-h-max items-start gap-5">
 
-                {/* ADD BUTTON */}
+                Add button
                 <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-orange-800 via-orange-300 to-orange-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={openAddModal}>
                   <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">ADD</span>
                 </button>
-                {/* OPTIONS BUTTON */}
+                
+                Option button
                 <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]">
                   <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">EDIT</span>
                 </button>
-              </div>
+              </div> */}
 
               <div className="flex flex-row min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
@@ -381,6 +447,8 @@ export default function Home() {
 
                         </DialogueDiv>
                     </div>
+
+                    
                     
                     <div className="flex flex-row gap-2">
                       <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={OKButton}>OK</button>

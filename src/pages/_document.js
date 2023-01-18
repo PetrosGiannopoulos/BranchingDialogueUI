@@ -7,7 +7,7 @@ export default function Document() {
       {/* <link href="https://fonts.googleapis.com/css2?family=Changa+One&family=Changa:wght@500&family=Lato:wght@400;700&family=Nunito+Sans:wght@800&display=swap" rel="stylesheet"/> */}
       {/* <link href="../public/styles.css" rel="stylesheet"></link> */}
       <link href="https://fonts.googleapis.com/css2?family=Changa+One&family=Changa:wght@500&family=Lalezar&family=Lato:wght@400;700&family=Nunito+Sans:wght@800&display=swap" rel="stylesheet" />
-      <link rel="icon" href="/logo.png" />
+      <link rel="icon" href="/favicon.ico" />
       </Head>
       <body>
         <Main />

@@ -78,4 +78,5 @@ module.exports = {
   },
   plugins: [],
   important: true,
+  mode: 'jit',
 }
