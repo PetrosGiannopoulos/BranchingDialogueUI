@@ -3,14 +3,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useCallback, useStore, memo, forwardRef } from 'react'
 import { useEffect} from 'react'
 import fs from 'fs-extra'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
-import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState } from 'reactflow';
+import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState,addEdge,ReactFlowProvider,useReactFlow,useUpdateNodeInternals } from 'reactflow';
+
+import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
+import '@reactflow/node-resizer/dist/style.css';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -20,26 +23,35 @@ export default function Home() {
 
   const [addModal, setAddModal] = useState(false)
   const [numberOptions, setNumberOptions] = useState(0)
-  const [dialogueText, setDialogueText] = useState("")
-  const [dialogue, setDialogue] = useState({})
-  const [dialogues, setDialogues] = useState({})
-  const [nodeData, setNodeData] = useState({})
-  const [edgeData, setEdgeData] = useState({})
-  const [initialized, setInitialized] = useState(false)
-  const [id, setID] = useState(1)
+  // const [dialogueText, setDialogueText] = useState("")
+  // const [dialogue, setDialogue] = useState({})
+  // const [dialogues, setDialogues] = useState({})
+  //const [nodeData, setNodeData] = useState({})
+  //const [edgeData, setEdgeData] = useState({})
+  //const [initialized, setInitialized] = useState(false)
+  // const [id, setID] = useState(1)
+  let reactFlowInstance;
 
-  const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:200, y:0})
-  const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
+  const dialogueDataRefs = {
+    id: useRef(1),
+    numberOptions: useRef(0),
+    dialogue : useRef({}),
+    dialogues: useRef({}),
+    addModal: useRef(false),
+    initialized: useRef(false),
+    nodeData_: useRef({}),
+    edgeData_: useRef({}),
+  };
+  
 
-  if(!initialized){
-    dialogues.dialogues = []
-    nodeData.position = []
-    nodeData.nodes = []
-    edgeData.edges = []
+  if(!dialogueDataRefs.initialized.current){
+    //dialogues.dialogues = [];
+    dialogueDataRefs.dialogues.current.dialogues = [];
+    dialogueDataRefs.nodeData_.current.position = [];
+    dialogueDataRefs.nodeData_.current.nodes = [];
+    dialogueDataRefs.edgeData_.current.edges = [];
     
   }
-
-  
 
   // let dialogue = {}
   
@@ -52,7 +64,7 @@ export default function Home() {
       <span className="text-white text-[18px] font-lato">Option {i+1}</span>
       <textarea className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your option here..."
         onChange={(event) => {
-          dialogue.dialogueOptions[i].text = event.target.value
+          dialogueDataRefs.dialogue.current.dialogueOptions[i].text = event.target.value
         }}
       />
       <input className="text-center w-16 p-2 rounded-sm"
@@ -72,7 +84,7 @@ export default function Home() {
 
           }
           else{
-            dialogue.dialogueOptions[i].next = event.target.value
+            dialogueDataRefs.dialogue.current.dialogueOptions[i].next = event.target.value
           }
 
         }
@@ -84,8 +96,10 @@ export default function Home() {
     return <div className="flex-1 flex-col p-2 gap-5 bg-scroll overflow-auto bg-toolbarbg-3 rounded-lg">{divs}</div>;
   }
 
+  const DialogueNodeMemo = React.memo(DialogueNode);
+
   const nodeTypes = {
-    dialogue: DialogueNode,
+    dialogue: DialogueNodeMemo,
   };
 
   function OptionNode({nodeId, handleId, text}){
@@ -98,113 +112,197 @@ export default function Home() {
       </div>
     )
   }
+  
 
   function DialogueNode({id, data}){
 
-    const [isSelected, setIsSelected] = useState(false);
+    const [isSelected, setIsSelected] = useState(true);
+    const [size, setSize] = useState({x:data.size.x,y:data.size.y});
   
     const handleClickOutside = () => {
       setIsSelected(false);
+      data.editMode = false;
     };
+    
+    const updateNodeInternals = useUpdateNodeInternals();
+
+    const sizeRef = useRef(null);
+
+    // useEffect(()=>{
+    //   updateNodeInternals(id);
+    // }, [id, updateNodeInternals])
 
     return (
-      <OutsideClickHandler onOutsideClick={handleClickOutside}>
-        <div className={'box-content flex flex-col gap-4 p-4 rounded-lg w-[256px] border-2 bg-toolbarbg-2 '+`${isSelected ? 'border-white':'border-toolbarbg-1'}`} onClick={() => setIsSelected(!isSelected)}>
-          <div className="text-white text-[12px] font-changaOne overflow-auto text-center">{data.text}</div>
+
+
+      <div ref = {sizeRef}>
+        <OutsideClickHandler onOutsideClick={handleClickOutside}>
+
+        <NodeResizer
+            
+            onResize={(e)=>{
+              //console.log(e.sourceEvent)
+              //setSize({x: e.sourceEvent.target.offsetParent.clientWidth, y: e.sourceEvent.target.offsetParent.clientHeight});
+              //updateNodeInternals(id);
+              //console.log(sizeRef)
+              //console.log(sizeRef)
+              setSize({x: sizeRef.current.lastElementChild.offsetParent.clientWidth, y: sizeRef.current.lastElementChild.offsetParent.clientHeight})
+            }}
+
+            handleClassName="bg-mainBg-2 rounded-sm w-[8px] h-[8px]" 
+            color="#000000" 
+            isVisible={isSelected} 
+            minWidth={80} 
+            minHeight={50} 
+            />
+
+        
+        <div style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} onClick={() => setIsSelected(!isSelected)}>
+
+          
+
+          {/* {console.log(size)} */}
+          {!data.editMode ? (
+            <div className="text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={() => { data.editMode = !data.editMode }}>{data.text}</div>
+          ) : (
+            <div>
+              <textarea className="resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
+                onChange={(event) => {
+                  dialogueDataRefs.dialogues.current.dialogues[id - 1].text = event.target.value
+                  data.text = event.target.value
+                }}
+              />
+            </div>
+          )}
+
 
           <div className="flex flex-col gap-2">
-              
-              {data.options!=null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
-                <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
-                  <OptionNode key={handleId} nodeId = {id} handleId={selectsInstance} text={data.options[handleId].text}/>
-                </div>
-              )) : (
-                <div>
-                  <Handle type="source" position={Position.Right} className="bg-mainBg-6 rounded-full w-4 h-4" />
-                </div>
-              )}
-            </div>
+
+            {data.options != null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
+              <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
+                <OptionNode key={handleId} nodeId={id} handleId={selectsInstance} text={data.options[handleId].text} />
+              </div>
+            )) : (
+              <div>
+                <Handle type="source" position={Position.Right} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-6px]" />
+              </div>
+            )}
+          </div>
 
           <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
-          
+
         </div>
-      </OutsideClickHandler>
+        </OutsideClickHandler>
+      </div>
+
+
     )
   }
 
-  function RightClickPaneContextMenu(event){
+  function PaneContextMenu({actions, position, isOpen}){
 
-    event.preventDefault();
     
-    setPaneContextMenuPosition({x: event.clientX-510, y: event.clientY-100});
-    
-    setPaneContentMenuIsOpen(true);
-
-  }
-
-  function AddNodeMenu(){
-    setPaneContentMenuIsOpen(false)
-    
-    openAddModal()
-  }
-
-  function CancelMenu(){
-    setPaneContentMenuIsOpen(false)
-  }
-
-  function PaneContextMenu({actions, position}){
-
     return (
+      isOpen?(
+      <div className={`z-10 absolute flex flex-col bg-white border-4 border-toolbarbg-2`} style={{ left: `${position.x}px`, top: `${position.y}px` }} >
+        {actions.map((action) => (
+          <button key={action.label} className="border-none text-[18px] font-lato p-4 hover:bg-[rgba(0.1,0.1,0.1,0.1)]" onClick={action.effect}>
+            {action.label}
+          </button>
+        ))}
 
-      <React.Fragment>
-        <div className={`z-10 absolute flex flex-col bg-white border-4 border-toolbarbg-2`} style={{left: `${position.x}px`, top: `${position.y}px`}} >
-          {actions.map((action) => (
-            <button key={action.label} className="border-none text-[18px] font-lato p-4 hover:bg-[rgba(0.1,0.1,0.1,0.1)]" onClick={action.effect}>
-              {action.label}
-            </button>
-          ))}
-          {/* {console.log(`z-10 absolute flex flex-col bg-white border-2 border-black left-[${position.x}px] top-[${position.y}px]`)} */}
-
-        </div>
-      </React.Fragment>
-
+      </div>):(<div></div>)
     )
   }
+  
 
   function Flow(){
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(nodeData.nodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(edgeData.edges);
+    const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
+    const [edges, setEdges, onEdgesChange] = useEdgesState(dialogueDataRefs.edgeData_.current.edges);
+
+    const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+
+    const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
+    const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
+
+    reactFlowInstance = useReactFlow();
+
+    const reactFlowRef = useRef(null)
+
+    // const size = useStore((s) => {
+    //   const node = s.nodeInternals.get(id);
+    
+    //   return {
+    //     width: node.width,
+    //     height: node.height,
+    //   };
+    // });
 
     return (
       <div className="flex flex-row w-full">
         <ReactFlow 
+
+          ref={reactFlowRef}
+
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
-          onPaneContextMenu={RightClickPaneContextMenu}
-          onPaneClick={CancelMenu}
+          onEdgesChange={onEdgesChange}
+
+          // defaultNodes={dialogueDataRefs.nodeData_.current.nodes}
+          onPaneContextMenu={(e)=>{
+            e.preventDefault();
+
+            const position = {
+               x: e.clientX - 400,
+               y: e.clientY - 100
+            };
+
+
+            setPaneContextMenuPosition({x: position.x, y: position.y});
+            setPaneContentMenuIsOpen(true);
+          }}
+          onPaneClick={()=>{
+            setPaneContentMenuIsOpen(false);
+          }}
           nodeTypes={nodeTypes}
+          onConnect={onConnect}
+
+         
           >
-          {paneContentMenuIsOpen? (
-            <PaneContextMenu 
-              
-              actions={
-                [
-                  {label: "Add Dialogue Node", effect: AddNodeMenu},
-                  {label: "Cancel", effect: CancelMenu},
-                ]
-              }
-            
-              position = {paneContextMenuPosition}
-            />
-          ):(
-            <React.Fragment />
-          )}
+          <PaneContextMenu
+
+            actions={
+              [
+                { label: "Add Dialogue Node", effect: ()=>
+                  {
+                    
+                    const bounds = reactFlowRef.current.getBoundingClientRect();
+                    const position = reactFlowInstance.project({
+                       x: paneContextMenuPosition.x-128,
+                       y: paneContextMenuPosition.y
+                    });
+                    reactFlowInstance.addNodes(AddNode({x_: position.x, y_: position.y}))
+                    setPaneContentMenuIsOpen(false)
+                    
+                  } 
+                },
+                { label: "Cancel", effect: ()=>{
+                    setPaneContentMenuIsOpen(false)
+                } },
+              ]
+            }
+
+            position={paneContextMenuPosition}
+
+            isOpen={paneContentMenuIsOpen}
+          />
           
           <Background />
           <Controls />
         </ReactFlow>
+        
       </div>
     );
   }
@@ -220,6 +318,50 @@ export default function Home() {
 
   const closeAddModal = async()=>{
     setAddModal(false)
+  }
+
+  function AddNode({x_, y_}){
+
+    //setDialogue({})
+
+    //setNumberOptions(0)
+
+    //setAddModal(false);
+    //setInitialized(true);
+    dialogueDataRefs.dialogue.current = {};
+    dialogueDataRefs.numberOptions.current = 0;
+    dialogueDataRefs.addModal.current = false;
+    dialogueDataRefs.initialized.current = true;
+    //dialogue.id = ""+id;
+    
+    //dialogue.text = ""+dialogueText;
+
+    dialogueDataRefs.dialogue.current = {...dialogueDataRefs.dialogue.current, id: ''+dialogueDataRefs.id.current, text: " --- Add Text ---", next: ''};
+
+    
+    const node = {
+      id: dialogueDataRefs.dialogue.current.id,
+      type: 'dialogue',
+      data: {
+        text: dialogueDataRefs.dialogue.current.text, 
+        options: dialogueDataRefs.dialogue.current.dialogueOptions,
+        selects: {
+          
+        },
+        editMode: false,
+        size: {x: 200, y: 100},
+      },
+      position: {x: x_, y: y_}
+    }
+
+    dialogueDataRefs.id.current++;
+    //setID(id+1)
+    dialogueDataRefs.dialogues.current.dialogues.push(dialogueDataRefs.dialogue.current);
+    //nodeData.nodes.push(node);
+    dialogueDataRefs.nodeData_.current.nodes.push(node);
+    
+    
+    return node;
   }
 
   const OKButton = async()=>{
@@ -329,7 +471,7 @@ export default function Home() {
   async function downloadFile() {
     try {
       
-      const blob = new Blob([JSON.stringify(dialogues, null, 2)], {type: "application/json"});//await response.blob();
+      const blob = new Blob([JSON.stringify(dialogueDataRefs.dialogues.current, null, 2)], {type: "application/json"});//await response.blob();
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -416,25 +558,26 @@ export default function Home() {
                             if(event.target.value === ""){
                               setNumberOptions(0)
 
-                              dialogue.id = ""
-                              dialogue.text = ""
-                              dialogue.dialogueOptions = []
+                              dialogueDataRefs.id.current = ""
+                              dialogueDataRefs.dialogue.current.text = ""
+                              dialogueDataRefs.dialogue.current.dialogueOptions = []
                               
                             }
                             else {
                               const numOptions = parseInt(event.target.value)
                               setNumberOptions(numOptions)
                               
-                              dialogue.id = ""
-                              dialogue.text = ""
-                              dialogue.dialogueOptions = []
+                              dialogueDataRefs.id.current = ""
+                              dialogueDataRefs.dialogue.current.text = ""
+                              dialogueDataRefs.dialogue.current.dialogueOptions = []
+                              
                               for (let i = 0; i < numOptions; i++) {
 
                                 const optionTemp = {
                                   "text" : "",
                                   "next" : "" 
                                 }
-                                dialogue.dialogueOptions.push(optionTemp)
+                                dialogueDataRefs.dialogue.current.dialogueOptions.push(optionTemp)
                                 
                               }
                               //console.log(JSON.stringify(dialogue, null, 2))
@@ -443,9 +586,7 @@ export default function Home() {
                           
                           />
                         </div>
-                        <DialogueDiv>
-
-                        </DialogueDiv>
+                        <DialogueDiv />
                     </div>
 
                     
@@ -473,8 +614,10 @@ export default function Home() {
           ):(
             <div className="flex flex-row bg-toolbarbg-3 w-full h-[800px] mt-[100px] ml-[20px]">
               {/* Node System */}
-              <Flow>
-              </Flow>
+              <ReactFlowProvider>
+                <Flow />
+              </ReactFlowProvider>
+              
             </div>
             
           )}
