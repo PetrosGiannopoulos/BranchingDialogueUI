@@ -118,10 +118,12 @@ export default function Home() {
 
     const [isSelected, setIsSelected] = useState(true);
     const [size, setSize] = useState({x:data.size.x,y:data.size.y});
-  
+    const [edit, setEdit] = useState(false);
+
+
     const handleClickOutside = () => {
       setIsSelected(false);
-      data.editMode = false;
+      setEdit(false);
     };
     
     const updateNodeInternals = useUpdateNodeInternals();
@@ -135,7 +137,7 @@ export default function Home() {
     return (
 
 
-      <div ref = {sizeRef}>
+      <div ref = {sizeRef} onClick={() => setIsSelected(!isSelected)}>
         <OutsideClickHandler onOutsideClick={handleClickOutside}>
 
         <NodeResizer
@@ -157,13 +159,13 @@ export default function Home() {
             />
 
         
-        <div style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} onClick={() => setIsSelected(!isSelected)}>
+        <div style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
 
           {/* {console.log(size)} */}
-          {!data.editMode ? (
-            <div className="text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={() => { data.editMode = !data.editMode }}>{data.text}</div>
+          {!edit? (
+            <div className="text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={() => { setEdit(true); }}>{data.text}</div>
           ) : (
             <div>
               <textarea className="resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
