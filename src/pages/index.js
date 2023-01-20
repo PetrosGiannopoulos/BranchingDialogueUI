@@ -265,9 +265,46 @@ export default function Home() {
       const targetHandle = params.targetHandle;
 
       if(sourceHandle){
-        dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].options[parseInt(source.splice(0,7))].next = target;
+        
+        const currentDialogue = dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1]
+        currentDialogue.dialogueOptions[parseInt(sourceHandle.substring(7))].next = target;
+
+
+        const edge = {
+          type: 'default',
+          data: {
+            
+          }
+        }
+
+        edge.id = `e${source}-${target}`
+        edge.source = `${source}`
+        edge.target = `${target}`
+
+        edge.data.selectIndex = parseInt(sourceHandle.substring(7))
+        edge.sourceHandle = 'handle-'+`${parseInt(sourceHandle.substring(7))}`
+        // console.log(edge)
+        dialogueDataRefs.edgeData_.current.edges.push(edge)
+
       }
-      console.log(params)
+      else{
+        const edge = {
+          type: 'default',
+          data: {
+            
+          }
+        }
+
+        edge.id = `e${source}-${target}`
+        edge.source = `${source}`
+        edge.target = `${target}`
+
+        dialogueDataRefs.edgeData_.current.edges.push(edge)
+      }
+      
+
+      
+      //console.log(params)
     })
 
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
@@ -432,6 +469,8 @@ export default function Home() {
         assign(dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.selects, 'handle-'+`${i}`, 'default')
       }
     }
+
+    console.log(dialogueDataRefs.dialogues.current.dialogues[parseInt(dialogueDataRefs.dialogue.current.id)-1])
 
     dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = dialogueDataRefs.dialogue.current.dialogueOptions;
 
