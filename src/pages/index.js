@@ -109,7 +109,7 @@ export default function Home() {
 
     //console.log(`Node Id: ${nodeId}, HandleId: ${handleId}, Text: ${text}`)
     return (
-      <div className="relative">
+      <div className="relative text-center">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
         <Handle type="source" position={Position.Right} id={handleId} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-6px]" />
       </div>
@@ -184,10 +184,10 @@ export default function Home() {
             />
 
         
-        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`, minWidth: 'max-content', minHeight: 'max-content'}} className={'flex flex-col gap-2 p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{minWidth: `${size.x}px`, minHeight: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
-
+          <div className="h-max">
           {/* {console.log(size)} */}
           {(!edit)? (
             <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
@@ -201,12 +201,12 @@ export default function Home() {
               />
             </div>
           )}
-
+          </div>
 
           <div className="flex flex-col gap-2">
 
             {data.options != null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
-              <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
+              <div key={handleId} className="rounded-lg border-black border-2 bg-toolbarbg-1">
                 <OptionNode key={handleId} nodeId={id} handleId={selectsInstance} text={data.options[handleId].text} />
               </div>
             )) : (
@@ -253,9 +253,22 @@ export default function Home() {
     const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(dialogueDataRefs.edgeData_.current.edges);
 
-    const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
+    //const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
-    
+    const onConnect = useCallback((params) => 
+    {
+      setEdges((eds) => addEdge(params, eds));
+
+      const source = params.source;
+      const sourceHandle = params.sourceHandle;
+      const target = params.target;
+      const targetHandle = params.targetHandle;
+
+      if(sourceHandle){
+        dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].options[parseInt(source.splice(0,7))].next = target;
+      }
+      console.log(params)
+    })
 
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
     const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
@@ -395,10 +408,12 @@ export default function Home() {
   function OpenAddModal(id){
     
     dialogueDataRefs.dialogue.current = dialogueDataRefs.dialogues.current.dialogues[parseInt(id)-1];
+    if(!dialogueDataRefs.dialogue.current.text)dialogueDataRefs.dialogue.current.text = "--- Add Text ---"
+    //console.log(dialogueDataRefs.dialogue.current);
     
     setAddModal(true);
 
-    console.log(id)
+    //console.log(id)
     // setDialogue({})
 
     // setNumberOptions(0)
@@ -411,6 +426,8 @@ export default function Home() {
     dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.text = dialogueDataRefs.dialogue.current.text;
 
     if(dialogueDataRefs.dialogue.current.dialogueOptions){
+
+      dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.selects = {}
       for(let i=0;i<dialogueDataRefs.dialogue.current.dialogueOptions.length;i++){
         assign(dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.selects, 'handle-'+`${i}`, 'default')
       }
@@ -465,6 +482,8 @@ export default function Home() {
     dialogueDataRefs.dialogues.current.dialogues.push(dialogueDataRefs.dialogue.current);
     //nodeData.nodes.push(node);
     dialogueDataRefs.nodeData_.current.nodes.push(node);
+
+    //console.log(dialogueDataRefs.dialogues.current.dialogues)
     
     
     return node;
@@ -660,8 +679,8 @@ export default function Home() {
                             if(event.target.value === ""){
                               setNumberOptions(0)
 
-                              dialogueDataRefs.id.current = ""
-                              dialogueDataRefs.dialogue.current.text = ""
+                              // dialogueDataRefs.id.current = ""
+                              // dialogueDataRefs.dialogue.current.text = ""
                               dialogueDataRefs.dialogue.current.dialogueOptions = []
                               
                             }
@@ -669,8 +688,8 @@ export default function Home() {
                               const numOptions = parseInt(event.target.value)
                               setNumberOptions(numOptions)
                               
-                              dialogueDataRefs.id.current = ""
-                              dialogueDataRefs.dialogue.current.text = ""
+                              // dialogueDataRefs.id.current = ""
+                              // dialogueDataRefs.dialogue.current.text = ""
                               dialogueDataRefs.dialogue.current.dialogueOptions = []
                               
                               for (let i = 0; i < numOptions; i++) {
