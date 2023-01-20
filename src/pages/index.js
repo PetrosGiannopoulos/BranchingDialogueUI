@@ -10,10 +10,11 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
-import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState,addEdge,ReactFlowProvider,useReactFlow,useUpdateNodeInternals } from 'reactflow';
+import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState,addEdge,ReactFlowProvider,useReactFlow,useUpdateNodeInternals, useStoreApi } from 'reactflow';
 
 import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
+import { data } from 'autoprefixer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -41,6 +42,8 @@ export default function Home() {
     initialized: useRef(false),
     nodeData_: useRef({}),
     edgeData_: useRef({}),
+    selectedNode: useRef('-1'),
+    editedNode: useRef('-1'),
   };
   
 
@@ -114,31 +117,56 @@ export default function Home() {
   }
   
 
-  function DialogueNode({id, data}){
+  function DialogueNode({id, data, selected}){
 
-    const [isSelected, setIsSelected] = useState(true);
+    const [isSelected, setIsSelected] = useState(selected);
     const [size, setSize] = useState({x:data.size.x,y:data.size.y});
-    const [edit, setEdit] = useState(false);
-
-
-    const handleClickOutside = () => {
-      setIsSelected(false);
-      setEdit(false);
-    };
+    const [edit, setEdit] = useState(data.editMode);
     
-    const updateNodeInternals = useUpdateNodeInternals();
+    function handleClickOutside(){
+      // setIsSelected(false);
+      // setEdit(false);
+      // dialogueDataRefs.editedNode.current = 0;
+      console.log("clickoutside")
+     
+    }
 
-    const sizeRef = useRef(null);
+    function handleClick(){
+      selected = true;
+      dialogueDataRefs.selectedNode.current = id;
+      setIsSelected(true);
+      
+    }
 
+    function handleDoubleClick(){
+      setEdit(true);
+      dialogueDataRefs.editedNode.current = id;
+    }
+
+    useEffect(()=>{
+      if(isSelected && selected==false){
+        setIsSelected(false);
+        setEdit(false);
+        
+        console.log("deselect "+ id)
+      }
+      
+      
+    }, [selected])
+    
+    
     // useEffect(()=>{
-    //   updateNodeInternals(id);
-    // }, [id, updateNodeInternals])
+    //   if(data.selected==false)setIsSelected(false);
+    // }, [data.selected, dialogueDataRefs.selectedNode.current])
+   
+    const sizeRef = useRef(null);
 
     return (
 
-
-      <div ref = {sizeRef} onClick={() => setIsSelected(!isSelected)}>
-        <OutsideClickHandler onOutsideClick={handleClickOutside}>
+      
+      // <OutsideClickHandler onOutsideClick={()=>handleClickOutside()}>
+      <div ref = {sizeRef} onClick={handleClick}>
+        
 
         <NodeResizer
             
@@ -159,16 +187,16 @@ export default function Home() {
             />
 
         
-        <div style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
 
           {/* {console.log(size)} */}
-          {!edit? (
-            <div className="text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={() => { setEdit(true); }}>{data.text}</div>
+          {(!edit)? (
+            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
           ) : (
             <div>
-              <textarea className="resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
+              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
                 onChange={(event) => {
                   dialogueDataRefs.dialogues.current.dialogues[id - 1].text = event.target.value
                   data.text = event.target.value
@@ -178,7 +206,7 @@ export default function Home() {
           )}
 
 
-          <div className="flex flex-col gap-2">
+          <div className="nodrag flex flex-col gap-2">
 
             {data.options != null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
               <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
@@ -194,10 +222,11 @@ export default function Home() {
           <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
 
         </div>
-        </OutsideClickHandler>
+        
+        
       </div>
-
-
+      // </OutsideClickHandler>
+      
     )
   }
 
@@ -225,8 +254,11 @@ export default function Home() {
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), []);
 
+    
+
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
     const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
+    
 
     reactFlowInstance = useReactFlow();
 
@@ -241,6 +273,53 @@ export default function Home() {
     //   };
     // });
 
+    const deselectAll = useCallback(() => {
+      setNodes((nds) =>
+        nds.map((node) => {
+          node.selected = false;
+          return node;
+        })
+      );
+    }, [setNodes]);
+
+    const handleOnPaneClick = async()=>{
+      
+      deselectAll();
+      
+      dialogueDataRefs.selectedNode.current = '-1';
+        
+      setPaneContentMenuIsOpen(false);
+      //console.log(onNodesChange)
+
+      
+    }
+
+    const handleOnPaneLeave = async()=>{
+      
+      deselectAll();
+      
+      dialogueDataRefs.selectedNode.current = '-1';
+      
+    }
+
+    function onHandleNodesChange(nodeChanges){
+      onNodesChange(nodeChanges)
+      // console.log(nodeChanges)
+      
+      // const length = nodeChanges.length
+
+      // for(let i=0;i<length;i++){
+      //   const id = nodeChanges[i].id;
+      //   const type = nodeChanges[i].type;
+      //   if(type=="select"){
+      //     const selected = nodeChanges[i].selected
+      //     reactFlowInstance.getNodes()[i].data.selected = selected;
+      //   }
+      // }
+
+    }
+    
+
     return (
       <div className="flex flex-row w-full">
         <ReactFlow 
@@ -249,7 +328,7 @@ export default function Home() {
 
           nodes={nodes}
           edges={edges}
-          onNodesChange={onNodesChange}
+          onNodesChange={onHandleNodesChange}
           onEdgesChange={onEdgesChange}
 
           // defaultNodes={dialogueDataRefs.nodeData_.current.nodes}
@@ -265,13 +344,16 @@ export default function Home() {
             setPaneContextMenuPosition({x: position.x, y: position.y});
             setPaneContentMenuIsOpen(true);
           }}
-          onPaneClick={()=>{
-            setPaneContentMenuIsOpen(false);
-          }}
+          onPaneClick={handleOnPaneClick}
+          onPaneMouseLeave={handleOnPaneLeave}
+
           nodeTypes={nodeTypes}
           onConnect={onConnect}
 
-         
+          zoomOnDoubleClick={false}
+
+          
+
           >
           <PaneContextMenu
 
@@ -353,6 +435,7 @@ export default function Home() {
         editMode: false,
         size: {x: 200, y: 100},
       },
+      selected: false,
       position: {x: x_, y: y_}
     }
 
