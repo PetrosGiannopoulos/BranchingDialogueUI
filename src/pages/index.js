@@ -70,7 +70,7 @@ export default function Home() {
           dialogueDataRefs.dialogue.current.dialogueOptions[i].text = event.target.value
         }}
       />
-      <input className="text-center w-16 p-2 rounded-sm"
+      {/* <input className="text-center w-16 p-2 rounded-sm"
       onChange={(event) => {
         if(event.target.value.match(/^\d+$/)===null){
           if(event.target.value.length>0){
@@ -92,7 +92,7 @@ export default function Home() {
 
         }
       }}
-      />
+      /> */}
     </div>
     
     );
@@ -111,7 +111,7 @@ export default function Home() {
     return (
       <div className="relative">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
-        <Handle type="source" position={Position.Right} id={handleId} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-50px]" />
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-6px]" />
       </div>
     )
   }
@@ -148,17 +148,12 @@ export default function Home() {
         setIsSelected(false);
         setEdit(false);
         
-        console.log("deselect "+ id)
+        // console.log("deselect "+ id)
       }
       
       
     }, [selected])
     
-    
-    // useEffect(()=>{
-    //   if(data.selected==false)setIsSelected(false);
-    // }, [data.selected, dialogueDataRefs.selectedNode.current])
-   
     const sizeRef = useRef(null);
 
     return (
@@ -182,12 +177,14 @@ export default function Home() {
             handleClassName="bg-mainBg-2 rounded-sm w-[8px] h-[8px]" 
             color="#000000" 
             isVisible={isSelected} 
-            minWidth={80} 
-            minHeight={50} 
+            
+            minWidth={160}
+            minHeight={100}            
+            
             />
 
         
-        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'flex flex-col p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`, minWidth: 'max-content', minHeight: 'max-content'}} className={'flex flex-col gap-2 p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
 
@@ -206,7 +203,7 @@ export default function Home() {
           )}
 
 
-          <div className="nodrag flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
 
             {data.options != null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
               <div key={handleId} className="rounded-lg p-2 w-[240px] border-black border-2 bg-toolbarbg-1">
@@ -220,6 +217,10 @@ export default function Home() {
           </div>
 
           <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
+
+          {/* Add option button */}
+          <button className="text-white text-[12px] bg-mainBg-5 rounded-xl font-lato" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          
 
         </div>
         
@@ -391,16 +392,36 @@ export default function Home() {
     );
   }
 
-  const openAddModal = async() =>{
+  function OpenAddModal(id){
+    
+    dialogueDataRefs.dialogue.current = dialogueDataRefs.dialogues.current.dialogues[parseInt(id)-1];
+    
     setAddModal(true);
 
-    setDialogue({})
+    console.log(id)
+    // setDialogue({})
 
-    setNumberOptions(0)
+    // setNumberOptions(0)
     
   }
 
-  const closeAddModal = async()=>{
+  function OKButtonModal(){
+    dialogueDataRefs.dialogues.current.dialogues[parseInt(dialogueDataRefs.dialogue.current.id)-1] = dialogueDataRefs.dialogue.current;
+
+    dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.text = dialogueDataRefs.dialogue.current.text;
+
+    if(dialogueDataRefs.dialogue.current.dialogueOptions){
+      for(let i=0;i<dialogueDataRefs.dialogue.current.dialogueOptions.length;i++){
+        assign(dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.selects, 'handle-'+`${i}`, 'default')
+      }
+    }
+
+    dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = dialogueDataRefs.dialogue.current.dialogueOptions;
+
+    setAddModal(false);
+  }
+
+  function CancelButtonModal(){
     setAddModal(false)
   }
 
@@ -543,11 +564,7 @@ export default function Home() {
     } else
         obj[prop[0]] = value;
   }
-
-  const CancelButton = async()=>{
-    setAddModal(false);
-  }
-
+  
   const saveDialogues = async ()=>{
     
     downloadFile()
@@ -620,7 +637,7 @@ export default function Home() {
                 <div className="absolute w-[1024px] h-[576px] bg-toolbarbg-1 rounded-xl shadow-lg p-8">
                   <div className="flex flex-col gap-4">
                     <span className="text-white text-[18px] font-lato">Dialogue Text Area</span>
-                    <textarea rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..." onChange={(e)=>setDialogueText(e.target.value)}/>
+                    <textarea rows="4" className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..." defaultValue={dialogueDataRefs.dialogue.current.text} onChange={(e)=>{dialogueDataRefs.dialogue.current.text = (e.target.value)}} />
                     <span className="text-white text-[18px] font-lato">Options</span>
                     
                     <div className="flex flex-row gap-4 h-[250px] w-full">
@@ -677,8 +694,8 @@ export default function Home() {
                     
                     
                     <div className="flex flex-row gap-2">
-                      <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={OKButton}>OK</button>
-                      <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={CancelButton}>CANCEL</button>
+                      <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={OKButtonModal}>OK</button>
+                      <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={CancelButtonModal}>CANCEL</button>
                     </div>
                   </div>
                 </div>
