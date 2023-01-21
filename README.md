@@ -25,7 +25,6 @@ https://main--candid-travesseiro-bc285e.netlify.app/
 
 # TODO
 
-- Proper Dialogue Connections
 - custom domain (Soon)
 
 #

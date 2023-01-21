@@ -12,7 +12,7 @@ import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
 import ReactFlow, { Background, Controls, Handle, Position, 
   useNodesState, useEdgesState,addEdge,ReactFlowProvider,
-  useReactFlow,useUpdateNodeInternals, useStoreApi,Viewport } from 'reactflow';
+  useReactFlow,useUpdateNodeInternals, useStoreApi,Viewport,getBezierPath,MarkerType } from 'reactflow';
 
 import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
@@ -73,29 +73,7 @@ export default function Home() {
           dialogueDataRefs.dialogue.current.dialogueOptions[i].text = event.target.value
         }}
       />
-      {/* <input className="text-center w-16 p-2 rounded-sm"
-      onChange={(event) => {
-        if(event.target.value.match(/^\d+$/)===null){
-          if(event.target.value.length>0){
-            event.target.value = event.target.value.replace(/\D/g,'');
-          }  
-          else event.target.value = "";
-            
-        }
-        else {
-          let inputNumber = parseInt(event.target.value);
-          event.target.value = inputNumber;
-          
-          if(event.target.value === "" || inputNumber === 0 || inputNumber === i){
-
-          }
-          else{
-            dialogueDataRefs.dialogue.current.dialogueOptions[i].next = event.target.value
-          }
-
-        }
-      }}
-      /> */}
+      
     </div>
     
     );
@@ -103,9 +81,16 @@ export default function Home() {
   }
 
   const DialogueNodeMemo = React.memo(DialogueNode);
+  const DialogueEdgeMemo = React.memo(DialogueEdge);
+  const OptionEdgeMemo = React.memo(OptionEdge);
 
   const nodeTypes = {
     dialogue: DialogueNodeMemo,
+  };
+
+  const edgeTypes = {
+    dialogue: DialogueEdgeMemo,
+    option: OptionEdgeMemo,
   };
 
   function OptionNode({nodeId, handleId, text}){
@@ -234,6 +219,88 @@ export default function Home() {
     )
   }
 
+  function DialogueEdge({
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    style = {},
+    data,
+    markerEnd,
+    selected,
+  }){
+
+    const [edgePath] = getBezierPath({
+      sourceX,
+      sourceY,
+      sourcePosition,
+      targetX,
+      targetY,
+      targetPosition,
+    });
+
+    return (
+      <>
+        <path
+          id={id}
+          style={style}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-orange-600'): ('stroke-orange-800')}`}
+          d={edgePath}
+          markerEnd={markerEnd}
+        />
+        <text>
+          <textPath href={`#${id}`} className="font-changaOne fill-slate-200 stroke-black" startOffset="50%" textAnchor="middle">
+            {data.text}
+          </textPath>
+        </text>
+      </>
+    );
+  }
+
+  function OptionEdge({
+    id,
+    sourceX,
+    sourceY,
+    targetX,
+    targetY,
+    sourcePosition,
+    targetPosition,
+    style = {},
+    data,
+    markerEnd,
+    selected,
+  }){
+
+    const [edgePath] = getBezierPath({
+      sourceX,
+      sourceY,
+      sourcePosition,
+      targetX,
+      targetY,
+      targetPosition,
+    });
+
+    return (
+      <>
+        <path
+          id={id}
+          style={style}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-blue-600'): ('stroke-blue-800')}`}
+          d={edgePath}
+          markerEnd={markerEnd}
+        />
+        <text>
+          <textPath href={`#${id}`} className="font-changaOne fill-slate-200 stroke-black" startOffset="50%" textAnchor="middle">
+            {data.text}
+          </textPath>
+        </text>
+      </>
+    );
+  }
+
   function PaneContextMenu({actions, position, isOpen}){
 
     
@@ -249,7 +316,7 @@ export default function Home() {
       </div>):(<div></div>)
     )
   }
-  
+
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
@@ -259,7 +326,15 @@ export default function Home() {
 
     const onConnect = useCallback((params) => 
     {
-      setEdges((eds) => addEdge(params, eds));
+      
+      let updatedEdges = addEdge(params, edges);
+
+      //let updatedEdges = dialogueDataRefs.edgeData_.current.edges;
+
+      // update the state of edges with the returned updated array
+      
+
+      //setEdges((eds) => addEdge(params, eds));
 
       const source = params.source;
       const sourceHandle = params.sourceHandle;
@@ -285,8 +360,15 @@ export default function Home() {
 
         edge.data.selectIndex = parseInt(sourceHandle.substring(7))
         edge.sourceHandle = 'handle-'+`${parseInt(sourceHandle.substring(7))}`
-        // console.log(edge)
-        dialogueDataRefs.edgeData_.current.edges.push(edge)
+        edge.type = 'option'
+        edge.data.text = "Next Dialogue"
+       
+         
+        dialogueDataRefs.edgeData_.current.edges.push(edge);
+        updatedEdges[updatedEdges.length-1] = edge
+        updatedEdges[updatedEdges.length-1].id = `${edge.sourceHandle} `+edge.id;
+
+        dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].dialogueOptions[parseInt(sourceHandle.substring(7))].next = target
 
       }
       else{
@@ -300,13 +382,22 @@ export default function Home() {
         edge.id = `e${source}-${target}`
         edge.source = `${source}`
         edge.target = `${target}`
-
+        edge.type = 'dialogue'
+        edge.data.text = "Next Dialogue"
+        
+        
         dialogueDataRefs.edgeData_.current.edges.push(edge)
+        
+        updatedEdges[updatedEdges.length-1] = edge
+        updatedEdges[updatedEdges.length-1].id = edge.id;
+
+        dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].next = target
+        
       }
-      
+     
+      setEdges(updatedEdges)
 
       
-      //console.log(params)
     })
 
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
@@ -323,7 +414,14 @@ export default function Home() {
           return node;
         })
       );
-    }, [setNodes]);
+
+      setEdges((eds) =>
+        eds.map((edge) => {
+          edge.selected = false;
+          return edge;
+        })
+      );
+    }, [setNodes, setEdges]);
 
     const handleOnPaneClick = async()=>{
       deselectAll();
@@ -377,6 +475,46 @@ export default function Home() {
         }
       }
     }
+
+    function onHandleEdgesChange(edgeChanges){
+      onEdgesChange(edgeChanges)
+      //console.log(edgeChanges)
+      
+      const length = edgeChanges.length
+
+      for(let i=0;i<length;i++){
+        const id = edgeChanges[i].id;
+        
+        const type = edgeChanges[i].type;
+        
+        if(type=="remove"){
+          
+          //console.log(id)
+          const index = dialogueDataRefs.edgeData_.current.edges.indexOf(id);
+          dialogueDataRefs.edgeData_.current.edges.splice(index, 1);
+
+          if(id.includes('handle')){
+            //console.log(id.split(' ')[1].substring(1).split('-')[0])
+            const edgePoints = id.split(' ')[1].substring(1).split('-');
+            const sourceId = edgePoints[0];
+            const targetId = edgePoints[1];
+
+            const handleId = id.split(' ')[0].substring(7);
+
+            //console.log(targetId)
+            dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].dialogueOptions[parseInt(handleId)].next = "";
+          }
+          else{
+            const edgePoints = id.substring(1).split('-');
+            const sourceId = edgePoints[0];
+            const targetId = edgePoints[1];
+
+            dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].next = "";
+          }
+         
+        }
+      }
+    }
     
 
     return (
@@ -388,7 +526,7 @@ export default function Home() {
           nodes={nodes}
           edges={edges}
           onNodesChange={onHandleNodesChange}
-          onEdgesChange={onEdgesChange}
+          onEdgesChange={onHandleEdgesChange}
 
           // defaultNodes={dialogueDataRefs.nodeData_.current.nodes}
           onPaneContextMenu={(e)=>{
@@ -410,17 +548,19 @@ export default function Home() {
           onMoveStart={(e)=>handleOnDragStart(e)}
           onMoveEnd={(e)=>handleOnDragEnd(e)}
           
-          
-          
 
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          
           onConnect={onConnect}
+          
 
           zoomOnDoubleClick={false}
 
           defaultViewport={dialogueDataRefs.paneViewport.current}
           
-         
+          
+
           >
           <PaneContextMenu
 
@@ -437,7 +577,7 @@ export default function Home() {
                     reactFlowInstance.addNodes(AddNode({x_: position.x, y_: position.y}))
                     setPaneContentMenuIsOpen(false)
                     
-                    console.log(reactFlowInstance.getViewport())
+                    //console.log(reactFlowInstance.getViewport())
                   } 
                 },
                 { label: "Cancel", effect: ()=>{
