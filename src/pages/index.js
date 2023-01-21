@@ -677,6 +677,27 @@ export default function Home() {
 
     dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = dialogueDataRefs.dialogue.current.dialogueOptions;
 
+    let index = -1;
+    const attachedEdges = [];
+    for(let i=0;i<dialogueDataRefs.edgeData_.current.edges.length;i++){
+
+      if(dialogueDataRefs.edgeData_.current.edges[i] != null && dialogueDataRefs.edgeData_.current.edges[i].source == dialogueDataRefs.dialogue.current.id){
+        attachedEdges.push(i);
+        delete dialogueDataRefs.edgeData_.current.edges[i];
+      }
+    }
+    for(let i=0;i<dialogueDataRefs.edgeData_.current.edges.length;i++){
+      if(dialogueDataRefs.edgeData_.current.edges[i] == null || dialogueDataRefs.edgeData_.current.edges[i] == undefined){
+        dialogueDataRefs.edgeData_.current.edges.splice(i, 1);
+      }
+    }
+
+    if(numberOptions == 0){
+      dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = null;
+    }
+    
+
+
     setAddModal(false);
   }
 
