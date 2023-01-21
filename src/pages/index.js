@@ -172,7 +172,7 @@ export default function Home() {
             />
 
         
-        <div key={data} style={{minWidth: `${size.x}px`, minHeight: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-toolbarbg-2 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{minWidth: `${size.x}px`, minHeight: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-gradient-to-bl from-slate-900 via-slate-800 to-slate-700 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
           <div className="h-max">
@@ -207,7 +207,7 @@ export default function Home() {
           <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-white text-[12px] bg-mainBg-5 rounded-xl font-lato" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-white text-[16px] bg-gradient-to-bl from-orange-400 via-orange-800 to-orange-600 rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
@@ -363,6 +363,25 @@ export default function Home() {
         edge.type = 'option'
         edge.data.text = "Next Dialogue"
        
+        
+        //remove previous edge that has the same sourceHandle and pointed elsewhere
+        let index = -1;
+        for (let i = 0; i < dialogueDataRefs.edgeData_.current.edges.length; i++) {
+
+          if (dialogueDataRefs.edgeData_.current.edges[i] != null && dialogueDataRefs.edgeData_.current.edges[i].sourceHandle === edge.sourceHandle) {
+            index = i;
+            if(dialogueDataRefs.edgeData_.current.edges[i].target == edge.target)return;
+            else break;
+          }
+        }
+
+        if (index != -1) {
+          dialogueDataRefs.edgeData_.current.edges.splice(index, 1);
+          delete updatedEdges[index];
+        }
+
+        
+
          
         dialogueDataRefs.edgeData_.current.edges.push(edge);
         updatedEdges[updatedEdges.length-1] = edge
@@ -384,19 +403,46 @@ export default function Home() {
         edge.target = `${target}`
         edge.type = 'dialogue'
         edge.data.text = "Next Dialogue"
+
+        //remove previous edge that pointed elsewhere
+        let index = -1;
+        for(let i=0;i<dialogueDataRefs.edgeData_.current.edges.length;i++){
+          
+          if(dialogueDataRefs.edgeData_.current.edges[i]!=null && dialogueDataRefs.edgeData_.current.edges[i].source === source){
+            index = i;
+            break;
+          }
+        }
         
+        if(index!=-1){
+          dialogueDataRefs.edgeData_.current.edges.splice(index, 1);
+          delete updatedEdges[index];
+        }
         
         dialogueDataRefs.edgeData_.current.edges.push(edge)
+
+        //updatedEdges = dialogueDataRefs.edgeData_.current.edges;
+        
         
         updatedEdges[updatedEdges.length-1] = edge
         updatedEdges[updatedEdges.length-1].id = edge.id;
 
         dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].next = target
+
+        
         
       }
      
       setEdges(updatedEdges)
 
+      for(let i=0;i<updatedEdges.length;i++){
+        if(updatedEdges[i]==null || updatedEdges[i] == undefined){
+          updatedEdges.splice(i,1)
+        }
+      }
+
+
+      console.log(`${dialogueDataRefs.edgeData_.current.edges.length}, ${updatedEdges.length}`)
       
     })
 
