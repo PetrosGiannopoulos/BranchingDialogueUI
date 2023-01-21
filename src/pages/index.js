@@ -519,6 +519,35 @@ export default function Home() {
             
           }
         }
+
+        if(type=="remove"){
+
+          let index = -1;
+          for(let j=0;j<dialogueDataRefs.dialogues.current.dialogues.length;j++){
+            if(dialogueDataRefs.dialogues.current.dialogues[j]!=null && dialogueDataRefs.dialogues.current.dialogues[j].id == id){
+              
+              index = j;
+              break;
+            }
+          }
+          if(index !=-1){
+            dialogueDataRefs.dialogues.current.dialogues.splice(index, 1);
+            // for(let j=0;j<dialogueDataRefs.nodeData_.current.nodes.length;j++){
+            //   if(dialogueDataRefs.nodeData_.current.nodes[j]!=null && dialogueDataRefs.nodeData_.current.nodes[j].id == id){
+            //     dialogueDataRefs.nodeData_.current.nodes.splice(j, 1)
+            //     break;
+            //   }
+            // }
+            // for(let j=0;j<dialogueDataRefs.edgeData_.current.edges.length;j++){
+            //   if(dialogueDataRefs.edgeData_.current.edges[j]!=null && (dialogueDataRefs.edgeData_.current.edges[j].target == id || dialogueDataRefs.edgeData_.current.edges[j].source == id) ){
+            //     dialogueDataRefs.edgeData_.current.edges.splice(j, 1)
+            //   }
+            // }
+
+          }
+          
+
+        }
       }
     }
 
