@@ -10,7 +10,9 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import OutsideClickHandler from 'react-outside-click-handler';
 import 'reactflow/dist/style.css';
-import ReactFlow, { Background, Controls, Handle, Position, useNodesState, useEdgesState,addEdge,ReactFlowProvider,useReactFlow,useUpdateNodeInternals, useStoreApi } from 'reactflow';
+import ReactFlow, { Background, Controls, Handle, Position, 
+  useNodesState, useEdgesState,addEdge,ReactFlowProvider,
+  useReactFlow,useUpdateNodeInternals, useStoreApi,Viewport } from 'reactflow';
 
 import { NodeResizer, NodeResizeControl } from '@reactflow/node-resizer';
 import '@reactflow/node-resizer/dist/style.css';
@@ -44,6 +46,7 @@ export default function Home() {
     edgeData_: useRef({}),
     selectedNode: useRef('-1'),
     editedNode: useRef('-1'),
+    paneViewport: useRef({x: 0, y: 0, zoom: 1}),
   };
   
 
@@ -127,7 +130,7 @@ export default function Home() {
       // setIsSelected(false);
       // setEdit(false);
       // dialogueDataRefs.editedNode.current = 0;
-      console.log("clickoutside")
+      // console.log("clickoutside")
      
     }
 
@@ -153,7 +156,7 @@ export default function Home() {
       
       
     }, [selected])
-    
+
     const sizeRef = useRef(null);
 
     return (
@@ -247,7 +250,6 @@ export default function Home() {
     )
   }
   
-
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
@@ -310,19 +312,9 @@ export default function Home() {
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
     const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
     
-
     reactFlowInstance = useReactFlow();
 
     const reactFlowRef = useRef(null)
-
-    // const size = useStore((s) => {
-    //   const node = s.nodeInternals.get(id);
-    
-    //   return {
-    //     width: node.width,
-    //     height: node.height,
-    //   };
-    // });
 
     const deselectAll = useCallback(() => {
       setNodes((nds) =>
@@ -334,22 +326,33 @@ export default function Home() {
     }, [setNodes]);
 
     const handleOnPaneClick = async()=>{
-      
       deselectAll();
-      
       dialogueDataRefs.selectedNode.current = '-1';
-        
       setPaneContentMenuIsOpen(false);
-      //console.log(onNodesChange)
-
-      
     }
 
     const handleOnPaneLeave = async()=>{
-      
       deselectAll();
-      
       dialogueDataRefs.selectedNode.current = '-1';
+    }
+
+    const handleOnPaneScroll = async(e)=>{
+      
+      dialogueDataRefs.paneViewport.current.zoom = reactFlowInstance.getZoom()
+    }
+
+    const handleOnDragStart = async(e)=>{
+      //console.log(e)
+      const panning = {x: reactFlowInstance.getViewport().x, y: reactFlowInstance.getViewport().y}
+      dialogueDataRefs.paneViewport.current.x = panning.x;
+      dialogueDataRefs.paneViewport.current.y = panning.y;
+    }
+
+    const handleOnDragEnd = async(e)=>{
+      //console.log(e)
+      const panning = {x: reactFlowInstance.getViewport().x, y: reactFlowInstance.getViewport().y}
+      dialogueDataRefs.paneViewport.current.x = panning.x;
+      dialogueDataRefs.paneViewport.current.y = panning.y;
       
     }
 
@@ -357,17 +360,22 @@ export default function Home() {
       onNodesChange(nodeChanges)
       // console.log(nodeChanges)
       
-      // const length = nodeChanges.length
+      const length = nodeChanges.length
 
-      // for(let i=0;i<length;i++){
-      //   const id = nodeChanges[i].id;
-      //   const type = nodeChanges[i].type;
-      //   if(type=="select"){
-      //     const selected = nodeChanges[i].selected
-      //     reactFlowInstance.getNodes()[i].data.selected = selected;
-      //   }
-      // }
+      for(let i=0;i<length;i++){
+        const id = nodeChanges[i].id;
+        const type = nodeChanges[i].type;
+        
+        if(type=="position"){
+          const position = nodeChanges[i].position;
+          const dragging  = nodeChanges[i].dragging;
 
+          if(dragging){
+            dialogueDataRefs.nodeData_.current.nodes[parseInt(id)-1].position = position;
+            
+          }
+        }
+      }
     }
     
 
@@ -397,14 +405,22 @@ export default function Home() {
           }}
           onPaneClick={handleOnPaneClick}
           onPaneMouseLeave={handleOnPaneLeave}
+          onWheelCapture ={(e)=>handleOnPaneScroll(e)}
+
+          onMoveStart={(e)=>handleOnDragStart(e)}
+          onMoveEnd={(e)=>handleOnDragEnd(e)}
+          
+          
+          
 
           nodeTypes={nodeTypes}
           onConnect={onConnect}
 
           zoomOnDoubleClick={false}
 
+          defaultViewport={dialogueDataRefs.paneViewport.current}
           
-
+         
           >
           <PaneContextMenu
 
@@ -421,6 +437,7 @@ export default function Home() {
                     reactFlowInstance.addNodes(AddNode({x_: position.x, y_: position.y}))
                     setPaneContentMenuIsOpen(false)
                     
+                    console.log(reactFlowInstance.getViewport())
                   } 
                 },
                 { label: "Cancel", effect: ()=>{
