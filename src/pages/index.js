@@ -101,7 +101,7 @@ export default function Home() {
     return (
       <div className="relative text-center">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
-        <Handle type="source" position={Position.Right} id={handleId} className="bg-illustration1-pink rounded-full w-4 h-4 right-[-6px]" />
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-illustration1-orange rounded-full w-4 h-4 right-[-6px]" />
       </div>
     )
   }
@@ -205,10 +205,10 @@ export default function Home() {
             )}
           </div>
 
-          <Handle type="target" position={Position.Left} className="bg-darkDesign4-red rounded-full w-4 h-4 left-[-6px]" />
+          <Handle type="target" position={Position.Left} className="bg-illustration1-pink rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-illustration1-white text-[16px] bg-illustration1-pink rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-illustration1-white text-[16px] bg-illustration1-orange rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
@@ -288,7 +288,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-[#f9bdbc]'): ('stroke-illustration1-pink')}`}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-[#ffaf53]'): ('stroke-illustration1-orange')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -851,8 +851,8 @@ export default function Home() {
       <main className="bg-darkDesign3-brown flex flex-col">
 
         {/* Toolbar */}
-        <div className="flex bg-illustration1-white h-[100px] w-full pl-8 shadow-xl drop-shadow-xl items-center">
-          <span className="font-lato text-[48px] text-illustration1-red">Branching Dialogue System</span>
+        <div className="flex bg-illustration1-blue h-[100px] w-full border-b-illustration1-white border-b-2 pl-8 shadow-xl drop-shadow-xl items-center">
+          <span className="font-lato text-[48px] text-illustration1-white">Branching Dialogue System</span>
         </div>
 
         <div className="flex flex-row bg-darkDesign3-black min-h-screen max-md:min-w-max max-md:w-full">
@@ -866,7 +866,7 @@ export default function Home() {
 
               <div className="flex flex-row min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
-                <button className="rounded-lg border-none hover:bg-illustration1-white hover:text-illustration1-red bg-illustration1-red font-lato text-illustration1-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
+                <button className="rounded-lg border-none hover:bg-illustration1-white hover:text-illustration1-red bg-illustration1-orange font-lato text-illustration1-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
                   SAVE{/* <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span> */}
                 </button>
               </div>
