@@ -111,14 +111,6 @@ export default function Home() {
     const [size, setSize] = useState({x:data.size.x,y:data.size.y});
     const [edit, setEdit] = useState(data.editMode);
     
-    function handleClickOutside(){
-      // setIsSelected(false);
-      // setEdit(false);
-      // dialogueDataRefs.editedNode.current = 0;
-      // console.log("clickoutside")
-     
-    }
-
     function handleClick(){
       selected = true;
       dialogueDataRefs.selectedNode.current = id;
@@ -136,7 +128,6 @@ export default function Home() {
         setIsSelected(false);
         setEdit(false);
         
-        // console.log("deselect "+ id)
       }
       
       
@@ -146,19 +137,13 @@ export default function Home() {
 
     return (
 
-      
-      // <OutsideClickHandler onOutsideClick={()=>handleClickOutside()}>
       <div ref = {sizeRef} onClick={handleClick}>
         
 
         <NodeResizer
             
             onResize={(e)=>{
-              //console.log(e.sourceEvent)
-              //setSize({x: e.sourceEvent.target.offsetParent.clientWidth, y: e.sourceEvent.target.offsetParent.clientHeight});
-              //updateNodeInternals(id);
-              //console.log(sizeRef)
-              //console.log(sizeRef)
+              
               setSize({x: sizeRef.current.lastElementChild.offsetParent.clientWidth, y: sizeRef.current.lastElementChild.offsetParent.clientHeight})
             }}
 
@@ -178,7 +163,7 @@ export default function Home() {
           <div className="h-max">
           {/* {console.log(size)} */}
           {(!edit)? (
-            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text+" "+id}</div>
+            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
           ) : (
             <div>
               <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
@@ -214,7 +199,6 @@ export default function Home() {
         
         
       </div>
-      // </OutsideClickHandler>
       
     )
   }
@@ -560,26 +544,7 @@ export default function Home() {
 
             setNodes(dialogueDataRefs.nodeData_.current.nodes)
             
-            // for(let j=0;j<dialogueDataRefs.nodeData_.current.nodes.length;j++){
-            //   if(dialogueDataRefs.nodeData_.current.nodes[j]!=null && dialogueDataRefs.nodeData_.current.nodes[j].id == id){
-            //     dialogueDataRefs.nodeData_.current.nodes.splice(j, 1)
-            //     break;
-            //   }
-            // }
-            // for(let j=0;j<dialogueDataRefs.edgeData_.current.edges.length;j++){
-            //   if(dialogueDataRefs.edgeData_.current.edges[j]!=null && (dialogueDataRefs.edgeData_.current.edges[j].target == id || dialogueDataRefs.edgeData_.current.edges[j].source == id) ){
-            //     dialogueDataRefs.edgeData_.current.edges.splice(j, 1)
-            //   }
-            // }
-
-            // for (let j=(index);j<dLength;j++){
-            //   if(dialogueDataRefs.nodeData_.current.nodes[j]!=null){
-            //     dialogueDataRefs.nodeData_.current.nodes[j].id = ""+(parseInt(dialogueDataRefs.nodeData_.current.nodes[j].id)-1);
-            //   }
-            // }
-
           }
-          
 
         }
       }
@@ -815,85 +780,6 @@ export default function Home() {
     return node;
   }
 
-  const OKButton = async()=>{
-    setAddModal(false);
-    setInitialized(true);
-
-    dialogue.id = ""+id;
-    
-    dialogue.text = ""+dialogueText;
-    
-    //console.log(JSON.stringify(dialogues, null, 2));
-    // nodeData.position.push({x: 0, y: 0})
-    const node = {
-      id: dialogue.id,
-      type: 'dialogue',
-      data: {
-        text: dialogue.text, 
-        options: dialogue.dialogueOptions,
-        selects: {
-          
-        }
-      },
-      //position: {x: (256+10)*dialogue.id, y: 40},
-      position: {x: paneContextMenuPosition.x, y: paneContextMenuPosition.y}
-    }
-
-    if(dialogue.dialogueOptions!=null){
-      node.data.selects = {}
-      for(let i=0;i<dialogue.dialogueOptions.length;i++){
-        assign(node.data.selects, 'handle-'+`${i}`, 'default')
-
-        if(dialogue.dialogueOptions[i].next==="" || dialogue.dialogueOptions[i].next === null){
-          window.alert('Every option needs to have a next parameter');
-
-          return;
-        }
-
-        const edge = {
-          type: 'default',
-          data: {
-            
-          }
-        }
-
-
-        edge.id = `e${dialogue.id}-${dialogue.dialogueOptions[i].next}`
-        edge.source = `${dialogue.id}`
-        edge.target = `${dialogue.dialogueOptions[i].next}`
-
-        edge.data.selectIndex = i
-        edge.sourceHandle = 'handle-'+`${i}`
-        // console.log(edge)
-        edgeData.edges.push(edge)
-      }
-      
-      
-    }
-    else{
-
-      const edge = {
-        type: 'default',
-        data: {
-          
-        }
-      }
-
-      edge.id = `e${dialogue.id}-${id}`
-      edge.source = `${dialogue.id}`
-      edge.target = `${id+1}`
-      edgeData.edges.push(edge)
-      
-    }
-
-    setID(id+1)
-    dialogues.dialogues.push(dialogue);
-
-    nodeData.nodes.push(node);
-    // edgeData.edges.push(edge)
-
-  }
-
   function assign(obj, prop, value) {
     if (typeof prop === "string")
         prop = prop.split(".");
@@ -951,19 +837,6 @@ export default function Home() {
 
             <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 gap-2 p-2">
 
-              {/* <div className="flex flex-row min-h-max items-start gap-5">
-
-                Add button
-                <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-orange-800 via-orange-300 to-orange-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={openAddModal}>
-                  <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">ADD</span>
-                </button>
-                
-                Option button
-                <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-blue-800 via-blue-300 to-blue-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]">
-                  <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">EDIT</span>
-                </button>
-              </div> */}
-
               <div className="flex flex-row min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
                 <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-lime-800 via-lime-300 to-lime-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
@@ -973,9 +846,6 @@ export default function Home() {
             </div>
 
             {/* Dialogue UI */}
-            {/* <DialoguePreviewDiv>
-
-            </DialoguePreviewDiv> */}
             
             {addModal? (
               <React.Fragment>
@@ -1005,8 +875,6 @@ export default function Home() {
                             if(event.target.value === ""){
                               setNumberOptions(0)
 
-                              // dialogueDataRefs.id.current = ""
-                              // dialogueDataRefs.dialogue.current.text = ""
                               dialogueDataRefs.dialogue.current.dialogueOptions = []
                               
                             }
@@ -1014,8 +882,6 @@ export default function Home() {
                               const numOptions = parseInt(event.target.value)
                               setNumberOptions(numOptions)
                               
-                              // dialogueDataRefs.id.current = ""
-                              // dialogueDataRefs.dialogue.current.text = ""
                               dialogueDataRefs.dialogue.current.dialogueOptions = []
                               
                               for (let i = 0; i < numOptions; i++) {
@@ -1027,7 +893,7 @@ export default function Home() {
                                 dialogueDataRefs.dialogue.current.dialogueOptions.push(optionTemp)
                                 
                               }
-                              //console.log(JSON.stringify(dialogue, null, 2))
+                              
                             }
                           }}
                           
@@ -1036,16 +902,12 @@ export default function Home() {
                         <DialogueDiv />
                     </div>
 
-                    
-                    
                     <div className="flex flex-row gap-2">
                       <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={OKButtonModal}>OK</button>
                       <button className="font-changaOne text-[18px] text-toolbarbg-1 rounded-lg border-toolbarbg-1 border-2 p-2 bg-white" onClick={CancelButtonModal}>CANCEL</button>
                     </div>
                   </div>
                 </div>
-
-                
 
               </React.Fragment>
             ): (
