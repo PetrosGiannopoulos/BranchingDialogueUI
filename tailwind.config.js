@@ -73,6 +73,58 @@ module.exports = {
           '6': '#61AFEF',
         },
         
+        lightDesign: {
+          'white': '#fcfcfc',
+          'black': '#292525',
+          'red': '#aa1426',
+        },
+
+        lightDesign2: {
+          'white': '#f9fdf5',
+          'purple': '#521b3a',
+          'red': '#a92931',
+        },
+
+        lightDesign3: {
+          'white': '#f9f9ff',
+          'black': '#2e3c4f',
+          'red': '#dc3e31',
+          'gray': '#b4a1b0',
+        },
+
+        lightDesign4: {
+          'white': '#f8fdff',
+          'black': '#12394b',
+          'red': '#d53d29',
+          'blue': '#37acdb',
+        },
+
+        darkDesign: {
+          'black': '#2b2d36',
+          'white': '#f6fdf2',
+          'bez': '#baa873',
+        },
+
+        darkDesign2: {
+          'black': '#0b0f0a',
+          'white': '#dfe0de',
+          'brown': '#b44d32',
+        },
+
+        darkDesign3: {
+          'black': '#2c2b3a',
+          'green': '#9cccb7',
+          'orange': '#e18c7a',
+          'brown': '#877378',
+        },
+
+        darkDesign4: {
+          'black': '#1f2533',
+          'white': '#efeff3',
+          'gray': '#9ba09a',
+          'red': '#c13b4c',
+        },
+
       }
     },
   },

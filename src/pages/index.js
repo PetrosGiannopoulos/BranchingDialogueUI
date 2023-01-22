@@ -47,6 +47,8 @@ export default function Home() {
     selectedNode: useRef('-1'),
     editedNode: useRef('-1'),
     paneViewport: useRef({x: 0, y: 0, zoom: 1}),
+    //dimensions: useRef({x: 200, y: 100}),
+    
   };
   
 
@@ -99,7 +101,7 @@ export default function Home() {
     return (
       <div className="relative text-center">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
-        <Handle type="source" position={Position.Right} id={handleId} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-6px]" />
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-darkDesign3 rounded-full w-4 h-4 right-[-6px]" />
       </div>
     )
   }
@@ -108,7 +110,7 @@ export default function Home() {
   function DialogueNode({id, data, selected}){
 
     const [isSelected, setIsSelected] = useState(selected);
-    const [size, setSize] = useState({x:data.size.x,y:data.size.y});
+    const [size, setSize] = useState(data.size);
     const [edit, setEdit] = useState(data.editMode);
     
     function handleClick(){
@@ -133,6 +135,11 @@ export default function Home() {
       
     }, [selected])
 
+    // useEffect(()=>{
+    //   setSize(data.size);
+    // }, [data.size])
+    
+
     const sizeRef = useRef(null);
 
     return (
@@ -145,7 +152,15 @@ export default function Home() {
             onResize={(e)=>{
               
               setSize({x: sizeRef.current.lastElementChild.offsetParent.clientWidth, y: sizeRef.current.lastElementChild.offsetParent.clientHeight})
+              data.size = ({x: sizeRef.current.lastElementChild.offsetParent.clientWidth, y: sizeRef.current.lastElementChild.offsetParent.clientHeight})
+              //data.size = dialogueDataRefs.dimensions.current;
+              //setSize({x: dialogueDataRefs.dimensions.current.x, y: dialogueDataRefs.dimensions.current.y});
             }}
+
+            onResizeEnd={(e)=>{
+              dialogueDataRefs.nodeData_.current.nodes[parseInt(""+id)-1].data.size = data.size;
+            }}
+
 
             handleClassName="bg-mainBg-2 rounded-sm w-[8px] h-[8px]" 
             color="#000000" 
@@ -157,19 +172,20 @@ export default function Home() {
             />
 
         
-        <div key={data} style={{minWidth: `${size.x}px`, minHeight: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-gradient-to-bl from-slate-900 via-slate-800 to-slate-700 ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-darkDesign3-brown ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
-          <div className="h-max">
+          <div className="">
           {/* {console.log(size)} */}
           {(!edit)? (
-            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
+            <div className=" text-darkDesign3-black text-[12px] font-changaOne text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
           ) : (
             <div>
-              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
+              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-darkDesign3-black bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
                 onChange={(event) => {
                   dialogueDataRefs.dialogues.current.dialogues[id - 1].text = event.target.value
                   data.text = event.target.value
+                  
                 }}
               />
             </div>
@@ -184,15 +200,15 @@ export default function Home() {
               </div>
             )) : (
               <div>
-                <Handle type="source" position={Position.Right} className="bg-mainBg-6 rounded-full w-4 h-4 right-[-6px]" />
+                <Handle type="source" position={Position.Right} className="bg-darkDesign3-green rounded-full w-4 h-4 right-[-6px]" />
               </div>
             )}
           </div>
 
-          <Handle type="target" position={Position.Left} className="bg-mainBg-4 rounded-full w-4 h-4 left-[-6px]" />
+          <Handle type="target" position={Position.Left} className="bg-darkDesign4-red rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-white text-[16px] bg-gradient-to-bl from-orange-400 via-orange-800 to-orange-600 rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-darkDesign3-black text-[16px] bg-darkDesign3-orange rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
@@ -231,7 +247,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-orange-600'): ('stroke-orange-800')}`}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-green-200'): ('stroke-darkDesign3-green')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -272,7 +288,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-blue-600'): ('stroke-blue-800')}`}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-darkDesign3-orange'): ('stroke-darkDesign2-brown')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -364,9 +380,6 @@ export default function Home() {
           delete updatedEdges[index];
         }
 
-        
-
-         
         dialogueDataRefs.edgeData_.current.edges.push(edge);
         updatedEdges[updatedEdges.length-1] = edge
         updatedEdges[updatedEdges.length-1].id = `${edge.sourceHandle} `+edge.id;
@@ -405,15 +418,10 @@ export default function Home() {
         
         dialogueDataRefs.edgeData_.current.edges.push(edge)
 
-        //updatedEdges = dialogueDataRefs.edgeData_.current.edges;
-        
-        
         updatedEdges[updatedEdges.length-1] = edge
         updatedEdges[updatedEdges.length-1].id = edge.id;
 
         dialogueDataRefs.dialogues.current.dialogues[parseInt(source)-1].next = target
-
-        
         
       }
      
@@ -425,8 +433,7 @@ export default function Home() {
         }
       }
 
-
-      console.log(`${dialogueDataRefs.edgeData_.current.edges.length}, ${updatedEdges.length}`)
+      //console.log(`${dialogueDataRefs.edgeData_.current.edges.length}, ${updatedEdges.length}`)
       
     })
 
@@ -457,6 +464,8 @@ export default function Home() {
       deselectAll();
       dialogueDataRefs.selectedNode.current = '-1';
       setPaneContentMenuIsOpen(false);
+
+      
     }
 
     const handleOnPaneLeave = async()=>{
@@ -502,7 +511,22 @@ export default function Home() {
             dialogueDataRefs.nodeData_.current.nodes[parseInt(id)-1].position = position;
             
           }
+          else{
+            if(position){
+              dialogueDataRefs.nodeData_.current.nodes[parseInt(id)-1].position = position;
+            }
+          }
+          
         }
+
+        // if(type== "dimensions"){
+        //   const dimensions = nodeChanges[i].dimensions;
+        //   const resizing = nodeChanges[i].resizing;
+
+        //   if(resizing){
+        //     dialogueDataRefs.dimensions.current = {x: dimensions.width, y: dimensions.height};
+        //   }
+        // }
 
         if(type=="remove"){
 
@@ -633,8 +657,6 @@ export default function Home() {
 
           defaultViewport={dialogueDataRefs.paneViewport.current}
           
-          
-
           >
           <PaneContextMenu
 
@@ -826,21 +848,26 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="bg-mainBg-1">
-        <div className="flex flex-row bg-gradient-to-b from-mainBg-1 via-mainBg-2 to-mainBg-1 min-h-screen max-md:min-w-max max-md:w-full">
+      <main className="bg-darkDesign3-brown flex flex-col">
+
+        {/* Toolbar */}
+        <div className="flex bg-lightDesign2-red h-[100px] w-full pl-8 shadow-xl drop-shadow-xl items-center">
+          <span className="font-lato text-[48px] text-darkDesign4-black">Branching Dialogue System</span>
+        </div>
+
+        <div className="flex flex-row bg-darkDesign3-black min-h-screen max-md:min-w-max max-md:w-full">
           
-          {/* Toolbar */}
-          <div></div>
+          
           {/* User Interface */}
-          <div className="flex flex-row bg-toolbarbg-1 rounded-xl shadow-lg w-[410px] h-[576px] mt-[100px] ml-[100px]">
+          <div className="flex flex-row rounded-xl shadow-lg w-[410px] h-[576px] mt-8 ml-[100px]">
             {/* UI Buttons */}
 
-            <div className="flex flex-col bg-toolbarbg-3 ml-4 mt-4 gap-2 p-2">
+            <div className="flex flex-col ml-4 gap-2 p-2">
 
               <div className="flex flex-row min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
-                <button className="rounded-lg border-none bg-toolbarbg-1 font-lato text-white bg-gradient-to-t from-lime-800 via-lime-300 to-lime-500 text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
-                  <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span>
+                <button className="rounded-lg border-none hover:bg-darkDesign4-red bg-lightDesign2-red font-lato text-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
+                  SAVE{/* <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span> */}
                 </button>
               </div>
             </div>
@@ -921,7 +948,7 @@ export default function Home() {
           {addModal? (
             <div></div>
           ):(
-            <div className="flex flex-row bg-toolbarbg-3 w-full h-[800px] mt-[100px] ml-[20px]">
+            <div className="flex flex-row bg-darkDesign3-black border-darkDesign4-gray shadow-lg border-[2px] w-full h-[800px] mt-8 ml-[20px]">
               {/* Node System */}
               <ReactFlowProvider>
                 <Flow />
