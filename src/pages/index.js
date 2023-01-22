@@ -195,7 +195,7 @@ export default function Home() {
           <div className="flex flex-col gap-2">
 
             {data.options != null ? Object.keys(data.selects).map((selectsInstance, handleId) => (
-              <div key={handleId} className="rounded-lg border-black border-2 bg-toolbarbg-1">
+              <div key={handleId} className="rounded-lg border-black border-2 bg-darkDesign3-black">
                 <OptionNode key={handleId} nodeId={id} handleId={selectsInstance} text={data.options[handleId].text} />
               </div>
             )) : (
@@ -208,7 +208,7 @@ export default function Home() {
           <Handle type="target" position={Position.Left} className="bg-darkDesign4-red rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-illustration1-black text-[16px] bg-illustration1-pink rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-illustration1-white text-[16px] bg-illustration1-pink rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
