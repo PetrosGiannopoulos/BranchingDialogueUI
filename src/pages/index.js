@@ -101,7 +101,7 @@ export default function Home() {
     return (
       <div className="relative text-center">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
-        <Handle type="source" position={Position.Right} id={handleId} className="bg-darkDesign3 rounded-full w-4 h-4 right-[-6px]" />
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-illustration1-pink rounded-full w-4 h-4 right-[-6px]" />
       </div>
     )
   }
@@ -172,16 +172,16 @@ export default function Home() {
             />
 
         
-        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm border-2 bg-darkDesign3-brown ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm drop-shadow-xl shadow-2xl bg-illustration1-white border-illustration1-black ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
           <div className="">
           {/* {console.log(size)} */}
           {(!edit)? (
-            <div className=" text-darkDesign3-black text-[12px] font-changaOne text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
+            <div className=" text-illustration1-red text-[12px] font-changaOne text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
           ) : (
             <div>
-              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-darkDesign3-black bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
+              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-illustration1-red bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
                 onChange={(event) => {
                   dialogueDataRefs.dialogues.current.dialogues[id - 1].text = event.target.value
                   data.text = event.target.value
@@ -200,7 +200,7 @@ export default function Home() {
               </div>
             )) : (
               <div>
-                <Handle type="source" position={Position.Right} className="bg-darkDesign3-green rounded-full w-4 h-4 right-[-6px]" />
+                <Handle type="source" position={Position.Right} className="bg-illustration1-blue rounded-full w-4 h-4 right-[-6px]" />
               </div>
             )}
           </div>
@@ -208,7 +208,7 @@ export default function Home() {
           <Handle type="target" position={Position.Left} className="bg-darkDesign4-red rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-darkDesign3-black text-[16px] bg-darkDesign3-orange rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-illustration1-black text-[16px] bg-illustration1-pink rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
@@ -247,7 +247,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-green-200'): ('stroke-darkDesign3-green')}`}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-cyan-300'): ('stroke-illustration1-blue')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -288,7 +288,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-darkDesign3-orange'): ('stroke-darkDesign2-brown')}`}
+          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-[#f9bdbc]'): ('stroke-illustration1-pink')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -851,8 +851,8 @@ export default function Home() {
       <main className="bg-darkDesign3-brown flex flex-col">
 
         {/* Toolbar */}
-        <div className="flex bg-lightDesign2-red h-[100px] w-full pl-8 shadow-xl drop-shadow-xl items-center">
-          <span className="font-lato text-[48px] text-darkDesign4-black">Branching Dialogue System</span>
+        <div className="flex bg-illustration1-white h-[100px] w-full pl-8 shadow-xl drop-shadow-xl items-center">
+          <span className="font-lato text-[48px] text-illustration1-red">Branching Dialogue System</span>
         </div>
 
         <div className="flex flex-row bg-darkDesign3-black min-h-screen max-md:min-w-max max-md:w-full">
@@ -866,7 +866,7 @@ export default function Home() {
 
               <div className="flex flex-row min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
-                <button className="rounded-lg border-none hover:bg-darkDesign4-red bg-lightDesign2-red font-lato text-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
+                <button className="rounded-lg border-none hover:bg-illustration1-white hover:text-illustration1-red bg-illustration1-red font-lato text-illustration1-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
                   SAVE{/* <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span> */}
                 </button>
               </div>
@@ -948,7 +948,7 @@ export default function Home() {
           {addModal? (
             <div></div>
           ):(
-            <div className="flex flex-row bg-darkDesign3-black border-darkDesign4-gray shadow-lg border-[2px] w-full h-[800px] mt-8 ml-[20px]">
+            <div className="flex flex-row bg-illustration1-white border-darkDesign4-gray shadow-lg border-[2px] w-full h-[800px] mt-8 ml-[20px]">
               {/* Node System */}
               <ReactFlowProvider>
                 <Flow />

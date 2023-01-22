@@ -125,6 +125,15 @@ module.exports = {
           'red': '#c13b4c',
         },
 
+        illustration1: {
+          'white': '#f7efe8',
+          'black': '#002447',
+          'red': '#c1535f',
+          'pink': '#baa873',
+          'orange': '#e89428',
+          'blue': '#52b2b7',
+        },
+
       }
     },
   },
