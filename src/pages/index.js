@@ -178,7 +178,7 @@ export default function Home() {
           <div className="h-max">
           {/* {console.log(size)} */}
           {(!edit)? (
-            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
+            <div className=" text-white text-[12px] font-changaOne overflow-auto text-center" onDoubleClick={handleDoubleClick}>{data.text+" "+id}</div>
           ) : (
             <div>
               <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-gray-900 bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
@@ -502,7 +502,7 @@ export default function Home() {
 
     function onHandleNodesChange(nodeChanges){
       onNodesChange(nodeChanges)
-      // console.log(nodeChanges)
+      //console.log(nodeChanges)
       
       const length = nodeChanges.length
 
@@ -523,7 +523,8 @@ export default function Home() {
         if(type=="remove"){
 
           let index = -1;
-          for(let j=0;j<dialogueDataRefs.dialogues.current.dialogues.length;j++){
+          const dLength = dialogueDataRefs.dialogues.current.dialogues.length;
+          for(let j=0;j<dLength;j++){
             if(dialogueDataRefs.dialogues.current.dialogues[j]!=null && dialogueDataRefs.dialogues.current.dialogues[j].id == id){
               
               index = j;
@@ -531,7 +532,34 @@ export default function Home() {
             }
           }
           if(index !=-1){
+
+            for (let j=(index+1);j<dLength;j++){
+              if(dialogueDataRefs.dialogues.current.dialogues[j] != null){
+                dialogueDataRefs.dialogues.current.dialogues[j].id = ""+(parseInt(dialogueDataRefs.dialogues.current.dialogues[j].id)-1);
+              }
+
+              if(dialogueDataRefs.nodeData_.current.nodes[j]!=null){
+                dialogueDataRefs.nodeData_.current.nodes[j].id = ""+(parseInt(dialogueDataRefs.nodeData_.current.nodes[j].id)-1);
+              }
+            }
+
+            for(let j=0;j<dialogueDataRefs.edgeData_.current.edges.length;j++){
+              if(dialogueDataRefs.edgeData_.current.edges[j]!=null && (dialogueDataRefs.edgeData_.current.edges[j].target == id || dialogueDataRefs.edgeData_.current.edges[j].source == id) ){
+                dialogueDataRefs.edgeData_.current.edges.splice(j, 1)
+              }
+            }
+
+
+            setEdges(dialogueDataRefs.edgeData_.current.edges);
+            // for(let j=0;j<length)
+
+
             dialogueDataRefs.dialogues.current.dialogues.splice(index, 1);
+            dialogueDataRefs.nodeData_.current.nodes.splice(index, 1)
+            dialogueDataRefs.id.current--;
+
+            setNodes(dialogueDataRefs.nodeData_.current.nodes)
+            
             // for(let j=0;j<dialogueDataRefs.nodeData_.current.nodes.length;j++){
             //   if(dialogueDataRefs.nodeData_.current.nodes[j]!=null && dialogueDataRefs.nodeData_.current.nodes[j].id == id){
             //     dialogueDataRefs.nodeData_.current.nodes.splice(j, 1)
@@ -541,6 +569,12 @@ export default function Home() {
             // for(let j=0;j<dialogueDataRefs.edgeData_.current.edges.length;j++){
             //   if(dialogueDataRefs.edgeData_.current.edges[j]!=null && (dialogueDataRefs.edgeData_.current.edges[j].target == id || dialogueDataRefs.edgeData_.current.edges[j].source == id) ){
             //     dialogueDataRefs.edgeData_.current.edges.splice(j, 1)
+            //   }
+            // }
+
+            // for (let j=(index);j<dLength;j++){
+            //   if(dialogueDataRefs.nodeData_.current.nodes[j]!=null){
+            //     dialogueDataRefs.nodeData_.current.nodes[j].id = ""+(parseInt(dialogueDataRefs.nodeData_.current.nodes[j].id)-1);
             //   }
             // }
 
