@@ -2,6 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base{
+  :root {
+    --color-text-white: #f7efe8;
+    --color-text-black: #002447;
+    --color-text-red: #c1535f;
+    --color-text-pink: #dc2e57;
+    --color-text-orange: #e89428;
+    --color-text-blue: #52b2b7;
+  }
+  .theme-light1{
+    --color-text-white: #f7efe8;
+    --color-text-black: #002447;
+    --color-text-red: #c1535f;
+    --color-text-pink: #dc2e57;
+    --color-text-orange: #e89428;
+    --color-text-blue: #52b2b7;
+  }
+  .theme-light2{
+    --color-text-white: #f6f8ff;
+    --color-text-black: #26202f;
+    --color-text-red: #89becb;
+    --color-text-pink: #209ac2;
+    --color-text-orange: #585491;
+    --color-text-blue: #cdd4d6;
+  }
+  .theme-light3{
+    --color-text-white: #eebf85;
+    --color-text-black: #133f4b;
+    --color-text-red: #7f887e;
+    --color-text-pink: #ee2e55;
+    --color-text-orange: #fefeff;
+    --color-text-blue: #4e4f58;
+  }
+  .theme-dark1{
+    --color-text-white: #001811;
+    --color-text-black: #562e4e;
+    --color-text-red: #96cbcc;
+    --color-text-pink: #d49250;
+    --color-text-orange: #6cb4c4;
+    --color-text-blue: #bf2b64;
+  }
+  .theme-dark2{
+    --color-text-white: #252426;
+    --color-text-black: #0dbbd4;
+    --color-text-red: #354ba8;
+    --color-text-pink: #ffea6e;
+    --color-text-orange: #f1bcaa;
+    --color-text-blue: #0095b3;
+  }
+  .theme-dark3{
+    --color-text-white: #020f03;
+    --color-text-black: #466cdd;
+    --color-text-red: #dc0051;
+    --color-text-pink: #00c9e9;
+    --color-text-orange: #df9c5d;
+    --color-text-blue: #28a457;
+  }
+
+}
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;

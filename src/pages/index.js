@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import { Inter } from '@next/font/google'
+import { Inter, Jolly_Lodger } from '@next/font/google'
 import styles from '@/styles/Home.module.css'
 import React, { useState, useRef, useCallback, useStore, memo, forwardRef } from 'react'
 import { useEffect} from 'react'
@@ -33,6 +33,7 @@ export default function Home() {
   //const [edgeData, setEdgeData] = useState({})
   //const [initialized, setInitialized] = useState(false)
   // const [id, setID] = useState(1)
+  const [theme, setTheme] = useState("theme-light2");
   let reactFlowInstance;
 
   const dialogueDataRefs = {
@@ -48,7 +49,6 @@ export default function Home() {
     editedNode: useRef('-1'),
     paneViewport: useRef({x: 0, y: 0, zoom: 1}),
     //dimensions: useRef({x: 200, y: 100}),
-    
   };
   
 
@@ -101,7 +101,7 @@ export default function Home() {
     return (
       <div className="relative text-center">
         <span className="font-changaOne text-[12px] text-white">{text}</span>
-        <Handle type="source" position={Position.Right} id={handleId} className="bg-illustration1-orange rounded-full w-4 h-4 right-[-6px]" />
+        <Handle type="source" position={Position.Right} id={handleId} className="bg-illustration-orange rounded-full w-4 h-4 right-[-6px]" />
       </div>
     )
   }
@@ -135,9 +135,11 @@ export default function Home() {
       
     }, [selected])
 
-    // useEffect(()=>{
-    //   setSize(data.size);
-    // }, [data.size])
+
+    //updates data when e.g. a node gets deleted
+    useEffect(()=>{
+      setSize(data.size);
+    }, [data.size])
     
 
     const sizeRef = useRef(null);
@@ -155,10 +157,12 @@ export default function Home() {
               data.size = ({x: sizeRef.current.lastElementChild.offsetParent.clientWidth, y: sizeRef.current.lastElementChild.offsetParent.clientHeight})
               //data.size = dialogueDataRefs.dimensions.current;
               //setSize({x: dialogueDataRefs.dimensions.current.x, y: dialogueDataRefs.dimensions.current.y});
+              
             }}
 
             onResizeEnd={(e)=>{
               dialogueDataRefs.nodeData_.current.nodes[parseInt(""+id)-1].data.size = data.size;
+             
             }}
 
 
@@ -172,20 +176,20 @@ export default function Home() {
             />
 
         
-        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm drop-shadow-xl shadow-2xl bg-illustration1-white border-illustration1-black ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
+        <div key={data} style={{width: `${size.x}px`, height: `${size.y}px`}} className={'justify-between flex flex-col gap-2 p-4 rounded-sm drop-shadow-xl shadow-2xl bg-illustration-white border-illustration1-black ' + `${isSelected ? 'border-white' : 'border-toolbarbg-1'}`} >
 
           
           <div className="">
           {/* {console.log(size)} */}
           {(!edit)? (
-            <div className=" text-illustration1-red text-[12px] font-changaOne text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
+            <div className=" text-illustration-red text-[12px] font-changaOne text-center" onDoubleClick={handleDoubleClick}>{data.text}</div>
           ) : (
             <div>
-              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-illustration1-red bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
+              <textarea className="nodrag resize-none block p-2.5 w-full text-sm text-illustration-red bg-gray-50 font-changa rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Write your dialogue here..."
                 onChange={(event) => {
                   dialogueDataRefs.dialogues.current.dialogues[id - 1].text = event.target.value
                   data.text = event.target.value
-                  
+                  if(data.text=="")data.text = " --- Add Text ---"
                 }}
               />
             </div>
@@ -200,15 +204,15 @@ export default function Home() {
               </div>
             )) : (
               <div>
-                <Handle type="source" position={Position.Right} className="bg-illustration1-blue rounded-full w-4 h-4 right-[-6px]" />
+                <Handle type="source" position={Position.Right} className="bg-illustration-blue rounded-full w-4 h-4 right-[-6px]" />
               </div>
             )}
           </div>
 
-          <Handle type="target" position={Position.Left} className="bg-illustration1-pink rounded-full w-4 h-4 left-[-6px]" />
+          <Handle type="target" position={Position.Left} className="bg-illustration-pink rounded-full w-4 h-4 left-[-6px]" />
 
           {/* Add option button */}
-          <button className="text-illustration1-white text-[16px] bg-illustration1-orange rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
+          <button className="text-illustration-white text-[16px] bg-illustration-orange rounded-xl font-nunito" onClick={()=>OpenAddModal(id)}>Add Option</button>
           
 
         </div>
@@ -247,7 +251,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-cyan-300'): ('stroke-illustration1-blue')}`}
+          className={`react-flow__edge-path stroke-illustration-blue stroke-[6] ${selected? ('animate-pulse'): ('')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -288,7 +292,7 @@ export default function Home() {
         <path
           id={id}
           style={style}
-          className={`react-flow__edge-path stroke-[6] ${selected? ('stroke-[#ffaf53]'): ('stroke-illustration1-orange')}`}
+          className={`react-flow__edge-path stroke-illustration-orange stroke-[6] ${selected? ('animate-pulse'): ('')}`}
           d={edgePath}
           markerEnd={markerEnd}
         />
@@ -437,6 +441,67 @@ export default function Home() {
       
     })
 
+    function ThemePallete(){
+
+      return (
+        <div className="z-10 absolute flex flex-row top-2 right-2 bg-illustration-white w-[760px] h-[80px] p-2 border-[1px] border-illustration-black gap-2">
+          <button className="theme-light1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light1")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+
+          <button className="theme-light2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light2")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+
+          <button className="theme-light3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light3")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+
+          <button className="theme-dark1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark1")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+
+          <button className="theme-dark2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark2")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+
+          <button className="theme-dark3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark3")}}>
+            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          </button>
+        </div>
+      )
+    }
+
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
     const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
     
@@ -514,19 +579,11 @@ export default function Home() {
           else{
             if(position){
               dialogueDataRefs.nodeData_.current.nodes[parseInt(id)-1].position = position;
+              
             }
           }
           
         }
-
-        // if(type== "dimensions"){
-        //   const dimensions = nodeChanges[i].dimensions;
-        //   const resizing = nodeChanges[i].resizing;
-
-        //   if(resizing){
-        //     dialogueDataRefs.dimensions.current = {x: dimensions.width, y: dimensions.height};
-        //   }
-        // }
 
         if(type=="remove"){
 
@@ -559,14 +616,14 @@ export default function Home() {
 
 
             setEdges(dialogueDataRefs.edgeData_.current.edges);
-            // for(let j=0;j<length)
-
+            
 
             dialogueDataRefs.dialogues.current.dialogues.splice(index, 1);
-            dialogueDataRefs.nodeData_.current.nodes.splice(index, 1)
+            dialogueDataRefs.nodeData_.current.nodes.splice(index, 1);
+            
             dialogueDataRefs.id.current--;
 
-            setNodes(dialogueDataRefs.nodeData_.current.nodes)
+            setNodes(dialogueDataRefs.nodeData_.current.nodes);
             
           }
 
@@ -588,26 +645,40 @@ export default function Home() {
         if(type=="remove"){
           
           //console.log(id)
-          const index = dialogueDataRefs.edgeData_.current.edges.indexOf(id);
-          dialogueDataRefs.edgeData_.current.edges.splice(index, 1);
+          let index = -1;
 
-          if(id.includes('handle')){
-            //console.log(id.split(' ')[1].substring(1).split('-')[0])
-            const edgePoints = id.split(' ')[1].substring(1).split('-');
-            const sourceId = edgePoints[0];
-            const targetId = edgePoints[1];
-
-            const handleId = id.split(' ')[0].substring(7);
-
-            //console.log(targetId)
-            dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].dialogueOptions[parseInt(handleId)].next = "";
+          for(let j=0;j<dialogueDataRefs.edgeData_.current.edges.length;j++){
+            if(dialogueDataRefs.edgeData_.current.edges[j] != null && dialogueDataRefs.edgeData_.current.edges[j].id === id){
+              index = j;
+              break;
+            }
           }
-          else{
-            const edgePoints = id.substring(1).split('-');
-            const sourceId = edgePoints[0];
-            const targetId = edgePoints[1];
 
-            dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].next = "";
+          if(index != -1){
+            //const index = dialogueDataRefs.edgeData_.current.edges.indexOf(id);
+            dialogueDataRefs.edgeData_.current.edges.splice(index, 1);
+          
+
+            if(id.includes('handle')){
+              //console.log(id.split(' ')[1].substring(1).split('-')[0])
+              const edgePoints = id.split(' ')[1].substring(1).split('-');
+              const sourceId = edgePoints[0];
+              const targetId = edgePoints[1];
+
+              const handleId = id.split(' ')[0].substring(7);
+
+              //console.log(targetId)
+              dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].dialogueOptions[parseInt(handleId)].next = "";
+            }
+            else{
+              const edgePoints = id.substring(1).split('-');
+              const sourceId = edgePoints[0];
+              const targetId = edgePoints[1];
+
+              dialogueDataRefs.dialogues.current.dialogues[parseInt(sourceId)-1].next = "";
+            }
+
+            setEdges(dialogueDataRefs.edgeData_.current.edges);
           }
          
         }
@@ -686,6 +757,8 @@ export default function Home() {
 
             isOpen={paneContentMenuIsOpen}
           />
+
+          <ThemePallete />
           
           <Background />
           <Controls />
@@ -723,11 +796,10 @@ export default function Home() {
       }
     }
 
-    console.log(dialogueDataRefs.dialogues.current.dialogues[parseInt(dialogueDataRefs.dialogue.current.id)-1])
+    //console.log(dialogueDataRefs.dialogues.current.dialogues[parseInt(dialogueDataRefs.dialogue.current.id)-1])
 
     dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = dialogueDataRefs.dialogue.current.dialogueOptions;
 
-    let index = -1;
     const attachedEdges = [];
     for(let i=0;i<dialogueDataRefs.edgeData_.current.edges.length;i++){
 
@@ -757,6 +829,7 @@ export default function Home() {
 
   function AddNode({x_, y_}){
 
+    
     //setDialogue({})
 
     //setNumberOptions(0)
@@ -848,14 +921,14 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="bg-darkDesign3-brown flex flex-col">
+      <main className={"bg-darkDesign3-brown flex flex-col h-screen "+theme}>
 
         {/* Toolbar */}
-        <div className="flex bg-illustration1-blue h-[100px] w-full border-b-illustration1-white border-b-2 pl-8 shadow-xl drop-shadow-xl items-center">
-          <span className="font-lato text-[48px] text-illustration1-white">Branching Dialogue System</span>
+        <div className="flex bg-illustration-blue h-[100px] w-full border-b-illustration-white border-b-2 pl-8 shadow-xl drop-shadow-xl items-center">
+          <span className="font-lato text-[48px] text-illustration-white">Branching Dialogue System</span>
         </div>
 
-        <div className="flex flex-row bg-darkDesign3-black min-h-screen max-md:min-w-max max-md:w-full">
+        <div className="flex flex-row bg-darkDesign3-black h-full max-md:min-w-max max-md:w-full">
           
           
           {/* User Interface */}
@@ -864,11 +937,16 @@ export default function Home() {
 
             <div className="flex flex-col ml-4 gap-2 p-2">
 
-              <div className="flex flex-row min-h-max items-start gap-5">
+              <div className="flex flex-col min-h-max items-start gap-5">
                 {/* SAVE BUTTON */}
-                <button className="rounded-lg border-none hover:bg-illustration1-white hover:text-illustration1-red bg-illustration1-orange font-lato text-illustration1-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
+                <button className="rounded-lg border-none hover:bg-illustration-white hover:text-illustration-red bg-illustration-orange font-lato text-illustration-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]" onClick={saveDialogues}>
                   SAVE{/* <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span> */}
                 </button>
+                <Link target="_blank" rel="noreferrer" href="https://www.buymeacoffee.com/pegiannos">
+                  <button className="rounded-lg border-none hover:bg-illustration-white hover:text-illustration-red bg-illustration-orange font-lato text-illustration-white text-[18px] text-center items-center cursor-pointer w-[170px] h-[56px]">
+                    Buy me a coffee!{/* <span className="rounded-lg px-[60px] py-[12px] text-center items-center bg-toolbarbg-3 text-orange-50 hover:bg-transparent transition ease-out duration-75 hover:text-toolbarbg-2">SAVE</span> */}
+                  </button>
+                </Link>
               </div>
             </div>
 
@@ -948,7 +1026,7 @@ export default function Home() {
           {addModal? (
             <div></div>
           ):(
-            <div className="flex flex-row bg-illustration1-white border-darkDesign4-gray shadow-lg border-[2px] w-full h-[800px] mt-8 ml-[20px]">
+            <div className="flex flex-row bg-illustration-white border-darkDesign4-gray shadow-lg border-[2px] w-full h-[800px] mt-8 mx-[20px]">
               {/* Node System */}
               <ReactFlowProvider>
                 <Flow />

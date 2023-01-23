@@ -125,6 +125,15 @@ module.exports = {
           'red': '#c13b4c',
         },
 
+        illustration: {
+          'white': 'var(--color-text-white)',
+          'black': 'var(--color-text-black)',
+          'red': 'var(--color-text-red)',
+          'pink': 'var(--color-text-pink)',
+          'orange': 'var(--color-text-orange)',
+          'blue': 'var(--color-text-blue)',
+        },
+
         illustration1: {
           'white': '#f7efe8',
           'black': '#002447',
