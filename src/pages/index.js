@@ -400,6 +400,8 @@ export default function Home() {
     )
   }
 
+  const deleteKeyArray = ['Backspace', 'Delete']
+
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
@@ -747,6 +749,8 @@ export default function Home() {
           zoomOnDoubleClick={false}
 
           defaultViewport={dialogueDataRefs.paneViewport.current}
+
+          deleteKeyCode={deleteKeyArray}
           
           >
           <PaneContextMenu
@@ -944,8 +948,9 @@ export default function Home() {
       <main className={"bg-darkDesign3-brown flex flex-col h-screen "+theme}>
 
         {/* Toolbar */}
-        <div className="flex bg-illustration-blue h-[100px] w-full border-b-illustration-white border-b-2 pl-8 shadow-xl drop-shadow-xl items-center">
-          <span className="font-lato text-[48px] text-illustration-white">Branching Dialogue System</span>
+        <div className="flex flex-col bg-illustration-blue h-[100px] w-full border-b-illustration-white border-b-2 pl-8 shadow-xl drop-shadow-xl">
+          <span className="font-lato text-[36px] text-illustration-white">DialogueCraft</span>
+          <span className="font-lato text-[24px] text-illustration-white italic">A Branching Dialogue System that helps you build Interactive Dialogue with Precision</span>
         </div>
 
         <div className="flex flex-row bg-darkDesign3-black h-full max-md:min-w-max max-md:w-full">

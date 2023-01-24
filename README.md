@@ -1,4 +1,4 @@
-# A Branching Dialogue UI
+# DialogueCraft: A Branching Dialogue System that helps you build Interactive Dialogue with Precision
 
 An easy to use app that enables game developers to create dialogues with choices that lead to other dialogues.
 
@@ -21,7 +21,7 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ## Live Demo
 
-https://main--candid-travesseiro-bc285e.netlify.app/
+dialoguecraft.xyz
 
 # TODO
 
