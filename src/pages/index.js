@@ -321,6 +321,85 @@ export default function Home() {
     )
   }
 
+  function ThemePallete(){
+
+    return (
+      <div className="z-10 absolute flex flex-row top-2 right-2 bg-illustration-white w-[1000px] h-[80px] p-2 border-[1px] border-illustration-black gap-2">
+        <button className="theme-light1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light1")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-light2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light2")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-light3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light3")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-light4 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light4")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-dark1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark1")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-dark2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark2")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-dark3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark3")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+
+        <button className="theme-dark4 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark4")}}>
+          <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+          <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
+        </button>
+      </div>
+    )
+  }
+
   function Flow(){
 
     const [nodes, setNodes, onNodesChange] = useNodesState(dialogueDataRefs.nodeData_.current.nodes);
@@ -441,66 +520,7 @@ export default function Home() {
       
     })
 
-    function ThemePallete(){
-
-      return (
-        <div className="z-10 absolute flex flex-row top-2 right-2 bg-illustration-white w-[760px] h-[80px] p-2 border-[1px] border-illustration-black gap-2">
-          <button className="theme-light1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light1")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-
-          <button className="theme-light2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light2")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-
-          <button className="theme-light3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-light3")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-
-          <button className="theme-dark1 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark1")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-
-          <button className="theme-dark2 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark2")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-
-          <button className="theme-dark3 grid grid-cols-3 gap-2 bg-illustration-white bg-opacity-75 text-center w-[120px] h-[64px] place-content-center p-2 border-[1px] border-illustration-black" onClick={()=>{setTheme("theme-dark3")}}>
-            <div className="bg-illustration-white w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-black w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-red w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-pink w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-orange w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-            <div className="bg-illustration-blue w-6 h-6 rounded-full border-[1px] border-illustration-black" />
-          </button>
-        </div>
-      )
-    }
+    
 
     const [paneContextMenuPosition, setPaneContextMenuPosition] = useState({x:0, y:0})
     const [paneContentMenuIsOpen, setPaneContentMenuIsOpen] = useState(false)
