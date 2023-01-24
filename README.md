@@ -21,11 +21,7 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ## Live Demo
 
-dialoguecraft.xyz
-
-# TODO
-
-- custom domain (Soon)
+www.dialoguecraft.xyz
 
 #
 
