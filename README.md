@@ -2,10 +2,13 @@
 
 An easy to use app that enables game developers to create dialogues with choices that lead to other dialogues.
 
+## Main Features
+
  - add main dialogue text
  - add as many options you like
  - add next reference to each option to indicate what dialogue comes next
  - export the dialogues in JSON format
+ - support for actions with the 'action' property
 
 ## Adding new dialogue text including options
 

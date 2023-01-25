@@ -26,13 +26,7 @@ export default function Home() {
 
   const [addModal, setAddModal] = useState(false)
   const [numberOptions, setNumberOptions] = useState(0)
-  // const [dialogueText, setDialogueText] = useState("")
-  // const [dialogue, setDialogue] = useState({})
-  // const [dialogues, setDialogues] = useState({})
-  //const [nodeData, setNodeData] = useState({})
-  //const [edgeData, setEdgeData] = useState({})
-  //const [initialized, setInitialized] = useState(false)
-  // const [id, setID] = useState(1)
+  
   const [theme, setTheme] = useState("theme-light2");
   let reactFlowInstance;
 
@@ -799,11 +793,6 @@ export default function Home() {
     //console.log(dialogueDataRefs.dialogue.current);
     
     setAddModal(true);
-
-    //console.log(id)
-    // setDialogue({})
-
-    // setNumberOptions(0)
     
   }
 
@@ -853,22 +842,12 @@ export default function Home() {
 
   function AddNode({x_, y_}){
 
-    
-    //setDialogue({})
-
-    //setNumberOptions(0)
-
-    //setAddModal(false);
-    //setInitialized(true);
     dialogueDataRefs.dialogue.current = {};
     dialogueDataRefs.numberOptions.current = 0;
     dialogueDataRefs.addModal.current = false;
     dialogueDataRefs.initialized.current = true;
-    //dialogue.id = ""+id;
-    
-    //dialogue.text = ""+dialogueText;
 
-    dialogueDataRefs.dialogue.current = {...dialogueDataRefs.dialogue.current, id: ''+dialogueDataRefs.id.current, text: " --- Add Text ---", next: ''};
+    dialogueDataRefs.dialogue.current = {...dialogueDataRefs.dialogue.current, id: ''+dialogueDataRefs.id.current, text: " --- Add Text ---", next: '', action: ''};
 
     
     const node = {
