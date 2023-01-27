@@ -830,6 +830,10 @@ export default function Home() {
     if(numberOptions == 0){
       dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.options = null;
     }
+    else{
+      dialogueDataRefs.dialogue.current.next = "";
+      dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].next = "";
+    }
     
 
 
