@@ -4,9 +4,10 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ## Main Features
 
- - add main dialogue text
+ - add dialogue text
  - add as many options you like
- - add next reference to each option to indicate what dialogue comes next
+ - connect each dialogue node with the next one
+ - connect any option of a dialogue node with any dialogue node including the same one based on common logic
  - export the dialogues in JSON format
  - support for actions with the 'action' property
 
