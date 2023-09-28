@@ -25,7 +25,7 @@ An easy to use app that enables game developers to create dialogues with choices
 
 ## Live Demo
 
-www.dialoguecraft.xyz (or https://dialoguecraft.netlify.app/ if page doesn't load)
+www.dialoguecraft.xyz
 
 #
 
