@@ -447,7 +447,7 @@ export default function Home() {
         let index = -1;
         for (let i = 0; i < dialogueDataRefs.edgeData_.current.edges.length; i++) {
 
-          if (dialogueDataRefs.edgeData_.current.edges[i] != null && dialogueDataRefs.edgeData_.current.edges[i].sourceHandle === edge.sourceHandle) {
+          if (dialogueDataRefs.edgeData_.current.edges[i] != null && dialogueDataRefs.edgeData_.current.edges[i].sourceHandle === edge.sourceHandle && dialogueDataRefs.edgeData_.current.edges[i].source === edge.source) {
             index = i;
             if(dialogueDataRefs.edgeData_.current.edges[i].target == edge.target)return;
             else break;
@@ -649,7 +649,7 @@ export default function Home() {
 
     function onHandleEdgesChange(edgeChanges){
       onEdgesChange(edgeChanges)
-      //console.log(edgeChanges)
+      console.log(edgeChanges)
       
       const length = edgeChanges.length
 
@@ -717,9 +717,10 @@ export default function Home() {
           onPaneContextMenu={(e)=>{
             e.preventDefault();
 
+			const rect = reactFlowRef.current.getBoundingClientRect();
             const position = {
-               x: e.clientX - 400,
-               y: e.clientY - 100
+               x: e.clientX-rect.left-128,
+               y: e.clientY-rect.top
             };
 
 
@@ -756,7 +757,7 @@ export default function Home() {
                     
                     const bounds = reactFlowRef.current.getBoundingClientRect();
                     const position = reactFlowInstance.project({
-                       x: paneContextMenuPosition.x-128,
+                       x: paneContextMenuPosition.x,
                        y: paneContextMenuPosition.y
                     });
                     reactFlowInstance.addNodes(AddNode({x_: position.x, y_: position.y}))
@@ -833,6 +834,8 @@ export default function Home() {
     else{
       dialogueDataRefs.dialogue.current.next = "";
       dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].next = "";
+	  
+	  dialogueDataRefs.nodeData_.current.nodes[parseInt(dialogueDataRefs.dialogue.current.id)-1].data.size = data.size+numberOptions*(0,100);
     }
     
 
